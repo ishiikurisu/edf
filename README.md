@@ -16,3 +16,6 @@ To Do
 - [x] Organize folder in Go style.
 - [x] Check how to import C code from Go.
 - [ ] Write documentation in Go style.
+- [ ] Test `notes2csv`.
+- [ ] Test `edfp2notes`.
+- [ ] Test `csv2multiple`.
