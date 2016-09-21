@@ -1,0 +1,9 @@
+#pragma once
+#include <stdlib.h>
+#include <stdio.h>
+#include <iso646.h>
+#include "./string.h"
+#include "./list.h"
+#include "./coseq.h"
+#include "./dict.h"
+#include "./hashfunctions.h"
