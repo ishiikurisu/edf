@@ -1,1 +1,1 @@
-git load origin master
+git pull origin master
