@@ -8,8 +8,6 @@ This package attempt to provide a Go implementation of the EDF format. It reads 
 
 They can be accessed using the `ReadFile(string)` function. There already are two programs to convert these files into the CSV and the ASCII formats: the `edf2csv` and the `edf2ascii` scripts. To convert from CSV to ASCII, use the `csv2single` and `csv2multiple` programs.
 
-To compile them, use `make`, with commands described in the `makefile`.
-
 To Do
 -----
 

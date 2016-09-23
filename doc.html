@@ -1,0 +1,410 @@
+<!--
+	Copyright 2009 The Go Authors. All rights reserved.
+	Use of this source code is governed by a BSD-style
+	license that can be found in the LICENSE file.
+-->
+<!--
+	Note: Static (i.e., not template-generated) href and id
+	attributes start with "pkg-" to make it impossible for
+	them to conflict with generated attributes (some of which
+	correspond to Go identifiers).
+-->
+
+	<script type='text/javascript'>
+	document.ANALYSIS_DATA = ;
+	document.CALLGRAPH = ;
+	</script>
+
+	
+		
+		<div id="short-nav">
+			<dl>
+			<dd><code>import "C:\Users\cris\Documents\work\Lab\src\github.com\ishiikurisu\edf"</code></dd>
+			</dl>
+			<dl>
+			<dd><a href="#pkg-overview" class="overviewLink">Overview</a></dd>
+			<dd><a href="#pkg-index" class="indexLink">Index</a></dd>
+			
+			
+				<dd><a href="#pkg-subdirectories">Subdirectories</a></dd>
+			
+			</dl>
+		</div>
+		<!-- The package's Name is printed as title by the top-level template -->
+		<div id="pkg-overview" class="toggleVisible">
+			<div class="collapsed">
+				<h2 class="toggleButton" title="Click to show Overview section">Overview ▹</h2>
+			</div>
+			<div class="expanded">
+				<h2 class="toggleButton" title="Click to hide Overview section">Overview ▾</h2>
+				
+			</div>
+		</div>
+		
+
+		<div id="pkg-index" class="toggleVisible">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Index section">Index ▹</h2>
+		</div>
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Index section">Index ▾</h2>
+
+		<!-- Table of contents for API; must be named manual-nav to turn off auto nav. -->
+			<div id="manual-nav">
+			<dl>
+			
+			
+			
+				
+				<dd><a href="#Csv2Multiple">func Csv2Multiple(inlet string)</a></dd>
+			
+				
+				<dd><a href="#Csv2Single">func Csv2Single(inlet string)</a></dd>
+			
+				
+				<dd><a href="#GetSampling">func GetSampling(header map[string]string) string</a></dd>
+			
+				
+				<dd><a href="#GetSpecsLength">func GetSpecsLength() map[string]int</a></dd>
+			
+				
+				<dd><a href="#GetSpecsList">func GetSpecsList() []string</a></dd>
+			
+				
+				<dd><a href="#GetUnits">func GetUnits(header map[string]string) string</a></dd>
+			
+				
+				<dd><a href="#Iff">func Iff(s bool, t, e string) string</a></dd>
+			
+				
+				<dd><a href="#ReadFile">func ReadFile(input string) (map[string]string, [][]int16)</a></dd>
+			
+				
+				<dd><a href="#ReadHeader">func ReadHeader(inlet *os.File, specsList []string, specsLength map[string]int) map[string]string</a></dd>
+			
+				
+				<dd><a href="#ReadRecords">func ReadRecords(inlet *os.File, header map[string]string) [][]int16</a></dd>
+			
+				
+				<dd><a href="#WriteASCII">func WriteASCII(header map[string]string, records [][]int16) string</a></dd>
+			
+				
+				<dd><a href="#WriteCSV">func WriteCSV(header map[string]string, records [][]int16) string</a></dd>
+			
+				
+				<dd><a href="#WriteGo">func WriteGo(header map[string]string, records [][]int16)</a></dd>
+			
+				
+				<dd><a href="#WriteNotes">func WriteNotes(header map[string]string, records [][]int16) string</a></dd>
+			
+			
+			
+			</dl>
+			</div><!-- #manual-nav -->
+
+		
+
+		
+			<h4>Package files</h4>
+			<p>
+			<span style="font-size:90%">
+			
+				<a href="/src/target/cwrap.go">cwrap.go</a>
+			
+				<a href="/src/target/edfReader.go">edfReader.go</a>
+			
+				<a href="/src/target/edfWrite.go">edfWrite.go</a>
+			
+				<a href="/src/target/rearrange.go">rearrange.go</a>
+			
+				<a href="/src/target/spec.go">spec.go</a>
+			
+				<a href="/src/target/useful.go">useful.go</a>
+			
+			</span>
+			</p>
+		
+		</div><!-- .expanded -->
+		</div><!-- #pkg-index -->
+
+		<div id="pkg-callgraph" class="toggle" style="display: none">
+		<div class="collapsed">
+			<h2 class="toggleButton" title="Click to show Internal Call Graph section">Internal call graph ▹</h2>
+		</div> <!-- .expanded -->
+		<div class="expanded">
+			<h2 class="toggleButton" title="Click to hide Internal Call Graph section">Internal call graph ▾</h2>
+			<p>
+			  In the call graph viewer below, each node
+			  is a function belonging to this package
+			  and its children are the functions it
+			  calls&mdash;perhaps dynamically.
+			</p>
+			<p>
+			  The root nodes are the entry points of the
+			  package: functions that may be called from
+			  outside the package.
+			  There may be non-exported or anonymous
+			  functions among them if they are called
+			  dynamically from another package.
+			</p>
+			<p>
+			  Click a node to visit that function's source code.
+			  From there you can visit its callers by
+			  clicking its declaring <code>func</code>
+			  token.
+			</p>
+			<p>
+			  Functions may be omitted if they were
+			  determined to be unreachable in the
+			  particular programs or tests that were
+			  analyzed.
+			</p>
+			<!-- Zero means show all package entry points. -->
+			<ul style="margin-left: 0.5in" id="callgraph-0" class="treeview"></ul>
+		</div>
+		</div> <!-- #pkg-callgraph -->
+
+		
+		
+		
+			
+			
+			<h2 id="Csv2Multiple">func <a href="/src/target/cwrap.go?s=180:211#L2">Csv2Multiple</a></h2>
+			<pre>func Csv2Multiple(inlet <a href="/pkg/builtin/#string">string</a>)</pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="Csv2Single">func <a href="/src/target/cwrap.go?s=106:135#L1">Csv2Single</a></h2>
+			<pre>func Csv2Single(inlet <a href="/pkg/builtin/#string">string</a>)</pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="GetSampling">func <a href="/src/target/edfWrite.go?s=3088:3137#L98">GetSampling</a></h2>
+			<pre>func GetSampling(header map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			<p>
+--- AUXILIAR FUNCTIONS ---
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="GetSpecsLength">func <a href="/src/target/spec.go?s=15:51#L1">GetSpecsLength</a></h2>
+			<pre>func GetSpecsLength() map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#int">int</a></pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="GetSpecsList">func <a href="/src/target/spec.go?s=701:729#L20">GetSpecsList</a></h2>
+			<pre>func GetSpecsList() []<a href="/pkg/builtin/#string">string</a></pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="GetUnits">func <a href="/src/target/edfWrite.go?s=3558:3604#L116">GetUnits</a></h2>
+			<pre>func GetUnits(header map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="Iff">func <a href="/src/target/useful.go?s=2113:2149#L106">Iff</a></h2>
+			<pre>func Iff(s <a href="/pkg/builtin/#bool">bool</a>, t, e <a href="/pkg/builtin/#string">string</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			
+			
+			
+
+		
+			
+			
+			<h2 id="ReadFile">func <a href="/src/target/edfReader.go?s=322:380#L2">ReadFile</a></h2>
+			<pre>func ReadFile(input <a href="/pkg/builtin/#string">string</a>) (map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>, [][]<a href="/pkg/builtin/#int16">int16</a>)</pre>
+			<p>
+Reads and EDF file, parsing it into the header and the records.
+The header will be a map relating the properties to a string with the raw data
+The records will be a matrix storing the raw bytes in the file
+</p>
+
+			
+			
+
+		
+			
+			
+			<h2 id="ReadHeader">func <a href="/src/target/edfReader.go?s=933:1064#L21">ReadHeader</a></h2>
+			<pre>func ReadHeader(inlet *<a href="/pkg/os/">os</a>.<a href="/pkg/os/#File">File</a>,
+    specsList []<a href="/pkg/builtin/#string">string</a>,
+    specsLength map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#int">int</a>) map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a></pre>
+			<p>
+*
+</p>
+<pre>* Reads the header of an EDF file
+* @param inlet file pointer to the EDF
+* @param specsList an array of strings containing the header itens in order
+* @param specsLength a map containing how many bytes each field occupy
+* @return header a map containing each field
+</pre>
+
+			
+			
+
+		
+			
+			
+			<h2 id="ReadRecords">func <a href="/src/target/edfReader.go?s=1946:2014#L58">ReadRecords</a></h2>
+			<pre>func ReadRecords(inlet *<a href="/pkg/os/">os</a>.<a href="/pkg/os/#File">File</a>, header map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>) [][]<a href="/pkg/builtin/#int16">int16</a></pre>
+			<p>
+*
+</p>
+<pre>* Reads the data records from the file
+* @param inlet the source file
+* @param header the map generated by the function readHeader
+* @return a matrix containing the data records
+</pre>
+
+			
+			
+
+		
+			
+			
+			<h2 id="WriteASCII">func <a href="/src/target/edfWrite.go?s=1899:1966#L52">WriteASCII</a></h2>
+			<pre>func WriteASCII(header map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>, records [][]<a href="/pkg/builtin/#int16">int16</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			<p>
+*
+</p>
+<pre>* Translates the data to the *.ascii format into the standard output.
+* @param header a map containg the EDF header data as strings.
+* @param records the data records as 16bit integers.
+</pre>
+
+			
+			
+
+		
+			
+			
+			<h2 id="WriteCSV">func <a href="/src/target/edfWrite.go?s=576:641#L11">WriteCSV</a></h2>
+			<pre>func WriteCSV(header map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>, records [][]<a href="/pkg/builtin/#int16">int16</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			<p>
+*
+</p>
+<pre>* Formats the data to the *.csv format into the standard output.
+* @param header a map containg the EDF header data as strings.
+* @param records the data records as 16bit integers.
+</pre>
+
+			
+			
+
+		
+			
+			
+			<h2 id="WriteGo">func <a href="/src/target/edfWrite.go?s=233:290#L1">WriteGo</a></h2>
+			<pre>func WriteGo(header map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>, records [][]<a href="/pkg/builtin/#int16">int16</a>)</pre>
+			<pre>--- MAIN FUNCTIONS ---
+</pre>
+<p>
+*
+</p>
+<pre>* Just writes the read data as Go vars.
+* @param header a map containg the EDF header data as strings.
+* @param records the data records as 16bit integers.
+</pre>
+
+			
+			
+
+		
+			
+			
+			<h2 id="WriteNotes">func <a href="/src/target/edfWrite.go?s=2739:2806#L85">WriteNotes</a></h2>
+			<pre>func WriteNotes(header map[<a href="/pkg/builtin/#string">string</a>]<a href="/pkg/builtin/#string">string</a>, records [][]<a href="/pkg/builtin/#int16">int16</a>) <a href="/pkg/builtin/#string">string</a></pre>
+			<p>
+*
+</p>
+<pre>* Extracts the annoatations channel from the EDF file, if it exists
+* @param header a map containg the EDF header data as strings.
+* @param records the data records as 16bit integers.
+</pre>
+
+			
+			
+
+		
+		
+	
+
+	
+
+
+
+
+
+	
+	
+		<h2 id="pkg-subdirectories">Subdirectories</h2>
+	
+	
+
+
+	<div class="pkg-dir">
+		<table>
+			<tr>
+				<th class="pkg-name">Name</th>
+				<th class="pkg-synopsis">Synopsis</th>
+			</tr>
+
+			
+			<tr>
+				<td colspan="2"><a href="..">..</a></td>
+			</tr>
+			
+
+			
+				
+					<tr>
+						<td class="pkg-name" style="padding-left: 0px;">
+							<a href="C/">C</a>
+						</td>
+						<td class="pkg-synopsis">
+							
+						</td>
+					</tr>
+				
+			
+				
+					<tr>
+						<td class="pkg-name" style="padding-left: 0px;">
+							<a href="tests/">tests</a>
+						</td>
+						<td class="pkg-synopsis">
+							
+						</td>
+					</tr>
+				
+			
+		</table>
+	</div>
+
+
+	
+

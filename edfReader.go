@@ -5,12 +5,10 @@ import "bytes"
 import "encoding/binary"
 
 /* --- MAIN FUNCTIONS --- */
-/**
- * Reads an EDF file
- * @param input a path to the file
- * @return header a map containing the EDF's header
- * @return records a matrix containing the data records
- */
+
+// Reads and EDF file, parsing it into the header and the records.
+// The header will be a map relating the properties to a string with the raw data
+// The records will be a matrix storing the raw bytes in the file
 func ReadFile(input string) (map[string]string, [][]int16) {
     inlet, _ := os.Open(input)
     specsList := GetSpecsList()
@@ -127,4 +125,3 @@ func getNumberSamples(header map[string]string) []int {
 
     return numberSamples
 }
-
