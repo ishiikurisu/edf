@@ -1,3 +1,10 @@
+/*
+This package aims to implement an interface to the EDF+ standard as described
+on http://www.edfplus.info/ for the Go language. The objective is to read a
+file and provide some kind of access to the stored data stored. It was written
+by Cristiano Silva Jr. while working at the Laboratory of Neuroscience and
+Behavior from the University of Brasilia and was released under the GPL license.
+*/
 package edf
 
 import "math"
@@ -53,7 +60,7 @@ func rearrange(inlet []int16) []int16 {
 
 func convert(midlet []int) []int16 {
 	limit := len(midlet)
-	outlet := make([]int16, limit)	
+	outlet := make([]int16, limit)
 
 	for i := 0; i < limit; i++ {
 		outlet[i] = int16(midlet[i]/2.0)

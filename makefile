@@ -1,2 +1,2 @@
 doc:
-	godoc -html %GOPATH% > doc.html
+	godoc -html %GOPATH% > docs/doc.html

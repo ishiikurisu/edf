@@ -113,6 +113,7 @@ func extractBits(inlet int16) []byte {
     return outlet
 }
 
+// Deprecated. A functional IF statemant.
 func Iff(s bool, t, e string) string {
     if s {
         return t
