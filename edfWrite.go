@@ -3,36 +3,29 @@ package edf
 import "fmt"
 
 /* --- MAIN FUNCTIONS --- */
-/**
- * Just writes the read data as Go vars.
- * @param header a map containg the EDF header data as strings.
- * @param records the data records as 16bit integers.
- */
+
+// Just writes the read data as Go vars.
 func WriteGo(header map[string]string, records [][]int16) {
 	fmt.Printf("header: %#v\n\n", header)
 	fmt.Printf("records: %#v\n", records)
 }
 
-/**
- * Formats the data to the *.csv format into the standard output.
- * @param header a map containg the EDF header data as strings.
- * @param records the data records as 16bit integers.
- */
+// Fornats the data to the *.csv format into a string. Ignores the annotations channel.
 func WriteCSV(header map[string]string, records [][]int16) string {
 	numberSignals := getNumberSignals(header)
 	convertionFactor := setConvertionFactor(header)
 	notesChannel := getAnnotationsChannel(header)
 
 	// writing header...
-	outlet := fmt.Sprintf("title:%s,", header["recording"])
-	outlet += fmt.Sprintf("recorded:%s %s,",
+	outlet := fmt.Sprintf("title:%s;", header["recording"])
+	outlet += fmt.Sprintf("recorded:%s %s;",
 		                  header["startdate"],
 		                  header["starttime"])
-	outlet += fmt.Sprintf("sampling:%s,", GetSampling(header)) 
-	outlet += fmt.Sprintf("subject:%s,", header["patient"])
-	outlet += fmt.Sprintf("labels:%v,", getLabels(header))
-	outlet += fmt.Sprintf("chan:%s,", header["numbersignals"])
-	outlet += fmt.Sprintf("units:%s\n", GetUnits(header)) 
+	outlet += fmt.Sprintf("sampling:%s;", GetSampling(header))
+	outlet += fmt.Sprintf("subject:%s;", header["patient"])
+	outlet += fmt.Sprintf("labels:%v;", getLabels(header))
+	outlet += fmt.Sprintf("chan:%s;", header["numbersignals"])
+	outlet += fmt.Sprintf("units:%s\n", GetUnits(header))
 
 	// writing data records...
 	limit := len(records[0])
@@ -44,7 +37,7 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 				if i == 0 {
 					outlet += fmt.Sprintf("%f", data)
 				} else {
-					outlet += fmt.Sprintf(", %f", data)
+					outlet += fmt.Sprintf("; %f", data)
 				}
 			}
 		}
@@ -54,11 +47,7 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 	return outlet
 }
 
-/**
- * Translates the data to the *.ascii format into the standard output.
- * @param header a map containg the EDF header data as strings.
- * @param records the data records as 16bit integers.
- */
+// Translates the data to the *.ascii format into a string. Ignores the annotations channel.
 func WriteASCII(header map[string]string, records [][]int16) string {
 	numberSignals := getNumberSignals(header)
 	convertionFactor := setConvertionFactor(header)
@@ -87,11 +76,7 @@ func WriteASCII(header map[string]string, records [][]int16) string {
 	return outlet
 }
 
-/**
- * Extracts the annoatations channel from the EDF file, if it exists
- * @param header a map containg the EDF header data as strings.
- * @param records the data records as 16bit integers.
- */
+// Extracts the annoatations channel from the EDF file, if it exists.
 func WriteNotes(header map[string]string, records [][]int16) string {
 	which := getAnnotationsChannel(header)
 	outlet := ""
@@ -105,6 +90,8 @@ func WriteNotes(header map[string]string, records [][]int16) string {
 }
 
 /* --- AUXILIAR FUNCTIONS --- */
+
+// Gets the sampling rate from the recording.
 func GetSampling(header map[string]string) string {
 	ns := getNumberSignals(header)
 	raw := separateString(header["samplesrecord"], ns)
@@ -123,6 +110,7 @@ func GetSampling(header map[string]string) string {
 	return outlet
 }
 
+// Gets the physical units from the recording.
 func GetUnits(header map[string]string) string {
 	// TODO extract units
 	return "uV"

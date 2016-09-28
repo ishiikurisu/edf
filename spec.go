@@ -1,5 +1,6 @@
 package edf
 
+// Gets the length in bytes of every specified field in the EDF file's header.
 func GetSpecsLength() map[string]int {
     spec := make(map[string]int)
 
@@ -27,6 +28,8 @@ func GetSpecsLength() map[string]int {
     return spec
 }
 
+// Gets the a list with codes for every field specified in the EDF file's
+// header. They will appear in the order they are needed.
 func GetSpecsList() []string {
     spec := make([]string, 20)
 

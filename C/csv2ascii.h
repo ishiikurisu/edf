@@ -83,7 +83,7 @@ int get_chan(char *line)
 
     if (strlen(line) <= 1) return result;
 
-    fields = list_strsplit(line, ',');
+    fields = list_strsplit(line, ';');
     for (field = fields->next; field != NULL && key == NULL; inc(field))
         if (match("chan", tidy_string(field->value)))
             key = substring(tidy_string(field->value), 5, strlen(tidy_string(field->value)));
@@ -127,7 +127,7 @@ char* get_labels(char *line)
     char *labels = NULL;
 
     if (strlen(line) <= 1) return NULL;
-    fields = list_strsplit(line, ',');
+    fields = list_strsplit(line, ';');
     for (field = fields->next; field != NULL && labels == NULL; inc(field))
         labels = are_these_labels(field->value);
 
@@ -165,7 +165,7 @@ LIST *parse_line(char *line)
     if (line == NULL || strlen(line) <= 1)
         return NULL;
 
-    values = list_strsplit(line, ',');
+    values = list_strsplit(line, ';');
     for (value = values->next; value != NULL; inc(value))
         temp = tidy_string(value->value),
         free(value->value),
