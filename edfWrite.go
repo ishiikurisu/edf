@@ -17,14 +17,14 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 	notesChannel := getAnnotationsChannel(header)
 
 	// writing header...
-	outlet := fmt.Sprintf("title:%s,", header["recording"])
-	outlet += fmt.Sprintf("recorded:%s %s,",
+	outlet := fmt.Sprintf("title:%s;", header["recording"])
+	outlet += fmt.Sprintf("recorded:%s %s;",
 		                  header["startdate"],
 		                  header["starttime"])
-	outlet += fmt.Sprintf("sampling:%s,", GetSampling(header))
-	outlet += fmt.Sprintf("subject:%s,", header["patient"])
-	outlet += fmt.Sprintf("labels:%v,", getLabels(header))
-	outlet += fmt.Sprintf("chan:%s,", header["numbersignals"])
+	outlet += fmt.Sprintf("sampling:%s;", GetSampling(header))
+	outlet += fmt.Sprintf("subject:%s;", header["patient"])
+	outlet += fmt.Sprintf("labels:%v;", getLabels(header))
+	outlet += fmt.Sprintf("chan:%s;", header["numbersignals"])
 	outlet += fmt.Sprintf("units:%s\n", GetUnits(header))
 
 	// writing data records...
@@ -37,7 +37,7 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 				if i == 0 {
 					outlet += fmt.Sprintf("%f", data)
 				} else {
-					outlet += fmt.Sprintf(", %f", data)
+					outlet += fmt.Sprintf("; %f", data)
 				}
 			}
 		}
