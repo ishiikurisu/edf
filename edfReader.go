@@ -3,6 +3,7 @@ package edf
 import "os"
 import "bytes"
 import "encoding/binary"
+import "fmt"
 
 /* --- MAIN FUNCTIONS --- */
 
@@ -15,6 +16,7 @@ func ReadFile(input string) (map[string]string, [][]int16) {
     specsLength := GetSpecsLength()
 
     defer inlet.Close()
+    fmt.Prnt
     header := ReadHeader(inlet, specsList, specsLength)
     records := ReadRecords(inlet, header)
 
@@ -31,6 +33,7 @@ func ReadHeader(inlet *os.File,
     header := make(map[string]string)
     index := 0
 
+    // Reading header's header
     for index < len(specsList) {
         spec := specsList[index]
 
@@ -45,8 +48,9 @@ func ReadHeader(inlet *os.File,
         index++
     }
 
+    // Reading header's records
     numberSignals := getNumberSignals(header)
-    for index = index; index < len(specsList) ; index++ {
+    for index = index; index < len(specsList); index++ {
         spec := specsList[index]
         data := make([]byte, specsLength[spec] * numberSignals)
         n, _ := inlet.Read(data)
@@ -97,6 +101,8 @@ func translate(inlet []byte) []int16 {
         shit := binary.Read(buffer, binary.LittleEndian, &data)
         if shit == nil {
             outlet[i] = data
+        } else {
+            panic(shit)
         }
     }
 

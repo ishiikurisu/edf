@@ -10,7 +10,8 @@ func WriteGo(header map[string]string, records [][]int16) {
 	fmt.Printf("records: %#v\n", records)
 }
 
-// Fornats the data to the *.csv format into a string. Ignores the annotations channel.
+// Fornats the data to the *.csv format into a string. 
+// Ignores the annotations channel.
 func WriteCSV(header map[string]string, records [][]int16) string {
 	numberSignals := getNumberSignals(header)
 	convertionFactor := setConvertionFactor(header)
@@ -47,7 +48,8 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 	return outlet
 }
 
-// Translates the data to the *.ascii format into a string. Ignores the annotations channel.
+// Translates the data to the *.ascii format into a string. 
+// Ignores the annotations channel.
 func WriteASCII(header map[string]string, records [][]int16) string {
 	numberSignals := getNumberSignals(header)
 	convertionFactor := setConvertionFactor(header)
@@ -163,14 +165,12 @@ func getAnnotationsChannel(header map[string]string) int {
 }
 
 /* returns false when it can't write anymore */
-func writeASCIIChannel(record []int16,
-	                   convertionFactor float64,
-	                   index int) (string, int) {
+func writeASCIIChannel(record []int16, factor float64, index int) (string, int) {
 	outlet := ""
 	flag := 1
 
 	if index < len(record) {
-		outlet += fmt.Sprintf("%f ", float64(record[index]) * convertionFactor)
+		outlet += fmt.Sprintf("%f ", float64(record[index]) * factor)
 	} else {
 		outlet += fmt.Sprintf("0 ")
 		flag = 0
