@@ -3,7 +3,6 @@ package edf
 import "os"
 import "bytes"
 import "encoding/binary"
-import "fmt"
 
 /* --- MAIN FUNCTIONS --- */
 
@@ -16,7 +15,6 @@ func ReadFile(input string) (map[string]string, [][]int16) {
     specsLength := GetSpecsLength()
 
     defer inlet.Close()
-    fmt.Prnt
     header := ReadHeader(inlet, specsList, specsLength)
     records := ReadRecords(inlet, header)
 
@@ -97,12 +95,12 @@ func translate(inlet []byte) []int16 {
     buffer := bytes.NewReader(inlet)
 
     for i := 0; i < limit; i++ {
-        // shit := binary.Read(buffer, binary.BigEndian, &data)
-        shit := binary.Read(buffer, binary.LittleEndian, &data)
-        if shit == nil {
+        // oops := binary.Read(buffer, binary.BigEndian, &data)
+        oops := binary.Read(buffer, binary.LittleEndian, &data)
+        if oops == nil {
             outlet[i] = data
         } else {
-            panic(shit)
+            panic(oops)
         }
     }
 
