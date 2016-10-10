@@ -142,7 +142,7 @@ func SetConvertionFactor(header map[string]string) []float64 {
 
 // Get the labels' names from the EDF file in one array
 func GetLabels(header map[string]string) []string {
-	return separateString(header["label"], numberSignals)
+	return separateString(header["label"], getNumberSignals(header))
 }
 
 // Get the labels' names from the EDF file in one String
