@@ -6,4 +6,26 @@ This package attempt to provide a Go implementation of the EDF format. It reads 
 + A map from strings to strings, representing the main header in the EDF file.
 + A slice of slices of int16, each one representing one channel's recording.
 
-They can be accessed using the `ReadFile(string)` function. There already are two programs to convert these files into the CSV and the ASCII formats: the `edf2csv` and the `edf2ascii` scripts. To convert from CSV to ASCII, use the `csv2single` and `csv2multiple` programs.
+They can be accessed using the `ReadFile(string)` function. The header information can be accessed through the keys given by the `GetSpecsList()` function. This query will give the raw string contained in the EDF file to be processed. The records can be accessed through their label's index. They are stored in their raw form. They can be converted using their respective convertion factor, as given by the `SetConvertionFactor(map[string]string)` function.
+
+Getting started
+---------------
+
+To install the EDF lib, run on terminal:
+
+```
+go get github.com/ishiikurisu/edf
+```
+
+Then import it on your code:
+
+``` go
+import "github.com/ishiikurisu/edf"
+import "fmt"
+
+func main() {
+    edfFile := "you_file.edf"
+    header, record := edf.ReadFile(edfFile)
+    fmt.Println(edf.WriteCSV(header, records))
+}
+```

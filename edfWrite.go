@@ -10,11 +10,11 @@ func WriteGo(header map[string]string, records [][]int16) {
 	fmt.Printf("records: %#v\n", records)
 }
 
-// Fornats the data to the *.csv format into a string. 
+// Fornats the data to the *.csv format into a string.
 // Ignores the annotations channel.
 func WriteCSV(header map[string]string, records [][]int16) string {
 	numberSignals := getNumberSignals(header)
-	convertionFactor := setConvertionFactor(header)
+	convertionFactor := SetConvertionFactor(header)
 	notesChannel := getAnnotationsChannel(header)
 
 	// writing header...
@@ -48,11 +48,11 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 	return outlet
 }
 
-// Translates the data to the *.ascii format into a string. 
+// Translates the data to the *.ascii format into a string.
 // Ignores the annotations channel.
 func WriteASCII(header map[string]string, records [][]int16) string {
 	numberSignals := getNumberSignals(header)
-	convertionFactor := setConvertionFactor(header)
+	convertionFactor := SetConvertionFactor(header)
 	notesChannel := getAnnotationsChannel(header)
 	outlet := ""
 	flag := numberSignals
@@ -118,7 +118,8 @@ func GetUnits(header map[string]string) string {
 	return "uV"
 }
 
-func setConvertionFactor(header map[string]string) []float64 {
+// Gets the convertion factor to each channel.
+func SetConvertionFactor(header map[string]string) []float64 {
 	ns := getNumberSignals(header)
 	factors := make([]float64, ns)
 	dmaxs := separateString(header["digitalmaximum"], ns)
@@ -139,6 +140,12 @@ func setConvertionFactor(header map[string]string) []float64 {
 	return factors
 }
 
+// Get the labels' names from the EDF file in one array
+func GetLabels(header map[string]string) []string {
+	return separateString(header["label"], numberSignals)
+}
+
+// Get the labels' names from the EDF file in one String
 func getLabels(header map[string]string) string {
 	numberSignals := getNumberSignals(header)
 	labels := separateString(header["label"], numberSignals)
