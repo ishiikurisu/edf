@@ -24,8 +24,8 @@ import "github.com/ishiikurisu/edf"
 import "fmt"
 
 func main() {
-    edfFile := "you_file.edf"
-    header, record := edf.ReadFile(edfFile)
+    edfFile := "your_file.edf"
+    header, records := edf.ReadFile(edfFile)
     fmt.Println(edf.WriteCSV(header, records))
 }
 ```
