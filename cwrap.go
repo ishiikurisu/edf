@@ -5,6 +5,15 @@ package edf
 // #include "C/csv2ascii.h"
 import "C"
 
+// TODO Make this repository not depend upon github.com/ishiikurisu/OA
+func Csv2SingleWoC(inlet string) {
+
+}
+
+func Csv2MultipleWoC(inlet string) {
+	
+}
+
 // Converts the generated *.csv file from WriteCSV to a single *.ascii file
 // with every channel recording.
 func Csv2Single(inlet string) {
