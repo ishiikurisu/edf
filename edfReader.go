@@ -11,15 +11,13 @@ import "encoding/binary"
 // The records will be a matrix storing the raw bytes in the file
 func ReadFile(input string) (map[string]string, [][]int16) {
     inlet, err := os.Open(input)
-    specsList := GetSpecsList()
-    specsLength := GetSpecsLength()
 
     if err != nil {
         panic(err)
     }
 
     defer inlet.Close()
-    header := ReadHeader(inlet, specsList, specsLength)
+    header := ReadHeader(inlet)
     records := ReadRecords(inlet, header)
 
     return header, records
@@ -29,9 +27,9 @@ func ReadFile(input string) (map[string]string, [][]int16) {
 // specifications and the length in bytes for each of them, as described by
 // the EDF standard. The specs can be accessed though the GetSpecsList
 // function, and their lenghts through the GetSpecsLength one.
-func ReadHeader(inlet *os.File,
-                specsList []string,
-                specsLength map[string]int) map[string]string {
+func ReadHeader(inlet *os.File) map[string]string {
+    specsList := GetSpecsList()
+    specsLength := GetSpecsLength()
     header := make(map[string]string)
     index := 0
 
