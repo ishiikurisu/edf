@@ -10,9 +10,13 @@ import "encoding/binary"
 // The header will be a map relating the properties to a string with the raw data
 // The records will be a matrix storing the raw bytes in the file
 func ReadFile(input string) (map[string]string, [][]int16) {
-    inlet, _ := os.Open(input)
+    inlet, err := os.Open(input)
     specsList := GetSpecsList()
     specsLength := GetSpecsLength()
+
+    if err != nil {
+        panic(err)
+    }
 
     defer inlet.Close()
     header := ReadHeader(inlet, specsList, specsLength)
@@ -108,7 +112,8 @@ func translate(inlet []byte) []int16 {
 }
 
 func getNumberSignals(header map[string]string) int {
-    return str2int(header["numbersignals"])
+    raw := header["numbersignals"]
+    return str2int(raw)
 }
 
 func getNumberSamples(header map[string]string) []int {
