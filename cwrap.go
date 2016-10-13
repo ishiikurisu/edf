@@ -4,7 +4,7 @@ package edf
 // #include "C/buffer.h"
 // #include "C/csv2ascii.h"
 import "C"
-// import "os"
+import "os"
 import "log"
 import "strings"
 // import "bufio"
@@ -12,14 +12,14 @@ import "strings"
 // TODO Make this repository not depend upon github.com/ishiikurisu/OA
 func Csv2Single(inlet string) {
 	outlet := generateSingleOutput(inlet)
-	// inputFile, _ := os.Open(inlet)
-	// outputFile, _ := os.OpenFile(outlet)
-	// scanner := bufio.NewScanner(fp)
-	// typewriter := bufio.NewWriter(os.OpenFile(outlet, ))
-	// defer fp.Close()
+	inputFile, _ := os.Open(inlet)
+	outputFile, _ := os.Create(outlet)
+	// scanner := bufio.NewScanner(inputFile)
+	// typewriter := bufio.NewWriter(outputFile)
+	defer inputFile.Close()
+	defer outputFile.Close()
 
-	log.Println(outlet)
-	Csv2SingleWC(inlet)
+	Csv2SingleWithC(inlet)
 }
 
 func Csv2Multiple(inlet string) {
@@ -28,13 +28,13 @@ func Csv2Multiple(inlet string) {
 
 // Converts the generated *.csv file from WriteCSV to a single *.ascii file
 // with every channel recording.
-func Csv2SingleWC(inlet string) {
+func Csv2SingleWithC(inlet string) {
     C.csv2single(C.CString(inlet))
 }
 
 // Converts the generated *.csv file from WriteCSV to multiple *.ascii files,
 // as many channels exist in the recording.
-func Csv2MultipleWC(inlet string) {
+func Csv2MultipleWithC(inlet string) {
     C.csv2multiple(C.CString(inlet))
 }
 
