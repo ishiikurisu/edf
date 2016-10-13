@@ -10,6 +10,9 @@ import "strings"
 import "bufio"
 
 // TODO Make this repository not depend upon github.com/ishiikurisu/OA
+
+// Converts the given file from the CSV format, as produced by edf.WriteCSV to
+// another, as produced by edf.WriteASCII
 func Csv2Single(inlet string) {
 	outlet := generateSingleOutput(inlet)
 	inputFile, _ := os.Open(inlet)
@@ -33,6 +36,7 @@ func Csv2Single(inlet string) {
 	typewriter.Flush()
 }
 
+// TODO Write this monster
 func Csv2Multiple(inlet string) {
 	C.csv2multiple(C.CString(inlet))
 }
