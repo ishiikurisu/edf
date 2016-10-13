@@ -5,21 +5,32 @@ package edf
 // #include "C/csv2ascii.h"
 import "C"
 import "os"
-import "log"
+// import "log"
 import "strings"
-// import "bufio"
+import "bufio"
 
 // TODO Make this repository not depend upon github.com/ishiikurisu/OA
 func Csv2Single(inlet string) {
 	outlet := generateSingleOutput(inlet)
 	inputFile, _ := os.Open(inlet)
 	outputFile, _ := os.Create(outlet)
-	// scanner := bufio.NewScanner(inputFile)
-	// typewriter := bufio.NewWriter(outputFile)
+	scanner := bufio.NewScanner(inputFile)
+	typewriter := bufio.NewWriter(outputFile)
 	defer inputFile.Close()
 	defer outputFile.Close()
 
-	Csv2SingleWithC(inlet)
+	// Ignoring header
+	scanner.Scan()
+	scanner.Text()
+
+	// Extracting data
+	for scanner.Scan() {
+		from := scanner.Text()
+		to := strings.Join(strings.Split(from, ";"), " ")
+		typewriter.WriteString(to + "\n")
+	}
+
+	typewriter.Flush()
 }
 
 func Csv2Multiple(inlet string) {
@@ -51,20 +62,4 @@ func generateSingleOutput(inlet string) string {
 
 	outlet := inlet[0:index] + ".ascii"
 	return outlet
-}
-
-func getLabelsFromHeader(header string)[]string {
-	fields := strings.Split(header, ";")
-
-	// Getting labels field
-
-	// Getting number channels
-
-	// Separating labels' names
-
-	return fields
-}
-
-func getNumberChan(header string) int {
-	return 0
 }
