@@ -1,9 +1,5 @@
 package edf
 
-// #include "C/oa.h"
-// #include "C/buffer.h"
-// #include "C/csv2ascii.h"
-import "C"
 import "os"
 import "fmt"
 import "log"
@@ -50,26 +46,16 @@ func Csv2Multiple(inlet string) {
 
 	// Opening output buffers
 	outlets := generateMultipleOutputs(inlet, labels)
-	// TODO Open files and defer their closing
+	outputFiles := createOutputFiles(outlets)
+	for _, outputFile := range outputFiles {
+		defer outputFile.Close()
+	}
 
 	// Writing data to each channel
 	// TODO While scanning input, write each information in their respetive
 	// TODO Flush output buffers
 
 	log.Printf("%#v\n", outlets)
-	C.csv2multiple(C.CString(inlet))
-}
-
-// Converts the generated *.csv file from WriteCSV to a single *.ascii file
-// with every channel recording.
-func Csv2SingleWithC(inlet string) {
-    C.csv2single(C.CString(inlet))
-}
-
-// Converts the generated *.csv file from WriteCSV to multiple *.ascii files,
-// as many channels exist in the recording.
-func Csv2MultipleWithC(inlet string) {
-    C.csv2multiple(C.CString(inlet))
 }
 
 /* ######################
@@ -159,4 +145,14 @@ func generateMultipleOutputs(inlet string, labels []string) []string {
 	}
 
 	return outlets
+}
+
+func createOutputFiles(outlets []string) []*os.File {
+	outputs := make([]*os.File, len(outlets))
+
+	for i, outlet := range outlets {
+		outputs[i], _ = os.Create(outlet)
+	}
+
+	return outputs
 }
