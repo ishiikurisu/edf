@@ -2,11 +2,8 @@ package edf
 
 import "os"
 import "fmt"
-import "log"
 import "strings"
 import "bufio"
-
-// TODO Make this repository not depend upon github.com/ishiikurisu/OA
 
 // Converts the given file from the CSV format, as produced by edf.WriteCSV to
 // another, as produced by edf.WriteASCII
@@ -33,7 +30,7 @@ func Csv2Single(inlet string) {
 	typewriter.Flush()
 }
 
-// TODO Write this monster
+// Converts a single CSV file to multiple ASCII files, each one for a different channel
 func Csv2Multiple(inlet string) {
 	inputFile, _ := os.Open(inlet)
 	scanner := bufio.NewScanner(inputFile)
@@ -52,10 +49,13 @@ func Csv2Multiple(inlet string) {
 	}
 
 	// Writing data to each channel
-	// TODO While scanning input, write each information in their respetive
-	// TODO Flush output buffers
-
-	log.Printf("%#v\n", outlets)
+	for scanner.Scan() {
+		from := scanner.Text()
+		to := strings.Split(from, ";")
+		for i, it := range to {
+			outputFiles[i].WriteString(trimField(it) + "\n")
+		}
+	}
 }
 
 /* ######################
