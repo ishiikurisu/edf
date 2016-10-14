@@ -1,6 +1,7 @@
 package edf
 
 import "fmt"
+import "bytes"
 
 /* --- MAIN FUNCTIONS --- */
 
@@ -13,38 +14,48 @@ func WriteGo(header map[string]string, records [][]int16) {
 // Fornats the data to the *.csv format into a string.
 // Ignores the annotations channel.
 func WriteCSV(header map[string]string, records [][]int16) string {
+	var buffer bytes.Buffer
 	numberSignals := getNumberSignals(header)
 	convertionFactor := SetConvertionFactor(header)
 	notesChannel := getAnnotationsChannel(header)
 
 	// writing header...
-	outlet := fmt.Sprintf("title:%s;", header["recording"])
-	outlet += fmt.Sprintf("recorded:%s %s;",
-		                  header["startdate"],
-		                  header["starttime"])
-	outlet += fmt.Sprintf("sampling:%s;", GetSampling(header))
-	outlet += fmt.Sprintf("subject:%s;", header["patient"])
-	outlet += fmt.Sprintf("labels:%v;", getLabels(header))
-	outlet += fmt.Sprintf("chan:%s;", header["numbersignals"])
-	outlet += fmt.Sprintf("units:%s\n", GetUnits(header))
+	fmt.Sprintf("title:%s;", header["recording"])
+	recorded := fmt.Sprintf("recorded:%s %s;",
+		                     header["startdate"],
+		                     header["starttime"])
+	sampling := fmt.Sprintf("sampling:%s;", GetSampling(header))
+	patient := fmt.Sprintf("subject:%s;", header["patient"])
+	labels := fmt.Sprintf("labels:%v;", getLabels(header))
+	channel := fmt.Sprintf("chan:%s;", header["numbersignals"])
+	units := fmt.Sprintf("units:%s\n", GetUnits(header))
+
+	buffer.WriteString(recorded)
+	buffer.WriteString(sampling)
+	buffer.WriteString(patient)
+	buffer.WriteString(labels)
+	buffer.WriteString(channel)
+	buffer.WriteString(units)
 
 	// writing data records...
 	limit := len(records[0])
 	for j := 0; j < limit; j++ {
+		line := ""
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
 				data := float64(records[i][j]) * convertionFactor[i]
 
 				if i == 0 {
-					outlet += fmt.Sprintf("%f", data)
+					line += fmt.Sprintf("%f", data)
 				} else {
-					outlet += fmt.Sprintf("; %f", data)
+					line += fmt.Sprintf("; %f", data)
 				}
 			}
 		}
-		outlet += fmt.Sprintf("\n")
+		buffer.WriteString(line + "\n")
 	}
 
+	outlet := buffer.String()
 	return outlet
 }
 
