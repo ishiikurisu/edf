@@ -5,7 +5,7 @@ package edf
 // #include "C/csv2ascii.h"
 import "C"
 import "os"
-// import "log"
+import "log"
 import "strings"
 import "bufio"
 
@@ -38,6 +38,24 @@ func Csv2Single(inlet string) {
 
 // TODO Write this monster
 func Csv2Multiple(inlet string) {
+	inputFile, _ := os.Open(inlet)
+	scanner := bufio.NewScanner(inputFile)
+	defer inputFile.Close()
+
+	// Extracting data from header
+	scanner.Scan()
+	header := scanner.Text()
+	labels := extractLabelsFromHeader(header)
+
+	// Opening output buffers
+	// TODO Generate output names
+	// TODO Open files and defer their closing
+
+	// Writing data to each channel
+	// TODO While scanning input, write each information in their respetive
+	// TODO Flush output buffers
+
+	log.Printf("%#v\n", labels)
 	C.csv2multiple(C.CString(inlet))
 }
 
@@ -66,4 +84,59 @@ func generateSingleOutput(inlet string) string {
 
 	outlet := inlet[0:index] + ".ascii"
 	return outlet
+}
+
+func extractLabelsFromHeader(header string) []string {
+	var fields []string
+	var labels []string
+	var noChans int
+
+	// Getting labels field
+	fields = strings.Split(header, ";")
+	for i := 0; i < len(fields); i++ {
+		stuff := strings.Split(fields[i], ":")
+		if stuff[0] == "labels" {
+			labels = stuff
+		} else if (stuff[0] == "chan") {
+			noChans = str2int(stuff[1])
+		}
+	}
+
+	// Extracting labels
+	fields = separateString(labels[1], noChans)
+	labels = make([]string, 0)
+	for _, field := range fields {
+		field = trimField(field)
+		if (field != "EDF Annotations") {
+			labels = addItem(labels, field) // I CAN'T BELIEVE APPEND DOES NOT WORK HERE
+		}
+	}
+
+	return labels
+}
+
+func trimField(inlet string) string {
+	lower := 0
+	upper := len(inlet) - 1
+
+	for inlet[lower] == ' ' || inlet[lower] == '[' {
+		lower++
+	}
+	for inlet[upper] == ' ' {
+		upper--
+	}
+
+	return inlet[lower:(upper+1)]
+}
+
+func addItem(box []string, item string) []string {
+	limit := len(box)
+	newBox := make([]string, limit+1)
+
+	for i, it := range box {
+		newBox[i] = it
+	}
+
+	newBox[limit] = item
+	return newBox
 }

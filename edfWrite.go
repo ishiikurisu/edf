@@ -26,7 +26,7 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 		                     header["starttime"])
 	sampling := fmt.Sprintf("sampling:%s;", GetSampling(header))
 	patient := fmt.Sprintf("subject:%s;", header["patient"])
-	labels := fmt.Sprintf("labels:%v;", getLabels(header))
+	labels := fmt.Sprintf("labels:%s;", GetLabels(header))
 	channel := fmt.Sprintf("chan:%s;", header["numbersignals"])
 	units := fmt.Sprintf("units:%s\n", GetUnits(header))
 
@@ -160,10 +160,10 @@ func GetLabels(header map[string]string) []string {
 func getLabels(header map[string]string) string {
 	numberSignals := getNumberSignals(header)
 	labels := separateString(header["label"], numberSignals)
-    outlet := labels[0]
+	outlet := ""
 
     for i := 1; i < numberSignals; i++ {
-    	outlet += " " + labels[i]
+    	outlet += labels[i] + " "
     }
 
     return outlet
