@@ -5,6 +5,7 @@ package edf
 // #include "C/csv2ascii.h"
 import "C"
 import "os"
+import "fmt"
 import "log"
 import "strings"
 import "bufio"
@@ -48,14 +49,14 @@ func Csv2Multiple(inlet string) {
 	labels := extractLabelsFromHeader(header)
 
 	// Opening output buffers
-	// TODO Generate output names
+	outlets := generateMultipleOutputs(inlet, labels)
 	// TODO Open files and defer their closing
 
 	// Writing data to each channel
 	// TODO While scanning input, write each information in their respetive
 	// TODO Flush output buffers
 
-	log.Printf("%#v\n", labels)
+	log.Printf("%#v\n", outlets)
 	C.csv2multiple(C.CString(inlet))
 }
 
@@ -139,4 +140,23 @@ func addItem(box []string, item string) []string {
 
 	newBox[limit] = item
 	return newBox
+}
+
+func generateMultipleOutputs(inlet string, labels []string) []string {
+	outlets := make([]string, len(labels))
+	raw := inlet
+	i := 0
+
+	// Getting to the point
+	for i = len(inlet)-1; inlet[i] != '.'; i-- {
+
+	}
+	raw = inlet[0:i]
+
+	// Constructing output
+	for j, label := range labels {
+		outlets[j] = fmt.Sprintf("%s.%s.ascii", raw, label)
+	}
+
+	return outlets
 }
