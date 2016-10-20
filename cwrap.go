@@ -106,6 +106,10 @@ func trimField(inlet string) string {
 	lower := 0
 	upper := len(inlet) - 1
 
+	if (len(inlet) == 0) {
+		return inlet
+	}
+
 	for inlet[lower] == ' ' || inlet[lower] == '[' {
 		lower++
 	}
