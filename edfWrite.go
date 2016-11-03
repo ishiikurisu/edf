@@ -201,10 +201,7 @@ func writeASCIIChannel(record []int16, factor float64, index int) (string, int) 
 func formatAnnotations(raw []byte) string {
 	return formatAnnotationsFeedback(0, raw, false, "")
 }
-func formatAnnotationsFeedback(index int,
-	                           raw []byte,
-	                           inside bool,
-	                           box string) string {
+func formatAnnotationsFeedback(index int, raw []byte, inside bool, box string) string {
 	if index == len(raw) {
 		return box
 	} else if inside {
