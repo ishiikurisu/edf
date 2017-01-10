@@ -1,5 +1,16 @@
 package edf
 
+// This is the definition of the EDF structure to be used by this library.
+type Edf struct {
+    // The variable to hold the EDF's header information.
+    Header map[string]string
+
+    // The records will be stored in its raw form, each one of them stored in
+    // an array of int16.
+    Records [][]int16
+}
+
+
 // Gets the length in bytes of every specified field in the EDF file's header.
 func GetSpecsLength() map[string]int {
     spec := make(map[string]int)
