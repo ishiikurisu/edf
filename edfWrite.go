@@ -6,29 +6,29 @@ import "bytes"
 /* --- MAIN FUNCTIONS --- */
 
 // Just writes the read data as Go vars.
-func WriteGo(header map[string]string, records [][]int16) {
-	fmt.Printf("header: %#v\n\n", header)
-	fmt.Printf("records: %#v\n", records)
+func (edf *Edf) WriteGo() {
+	fmt.Printf("header: %#v\n\n", edf.Header)
+	fmt.Printf("records: %#v\n", edf.Records)
 }
 
 // Fornats the data to the *.csv format into a string.
 // Ignores the annotations channel.
-func WriteCSV(header map[string]string, records [][]int16) string {
+func (edf *Edf) WriteCSV() string {
 	var buffer bytes.Buffer
-	numberSignals := getNumberSignals(header)
-	convertionFactor := SetConvertionFactor(header)
-	notesChannel := getAnnotationsChannel(header)
+	numberSignals := getNumberSignals(edf.Header)
+	convertionFactor := edf.GetConvertionFactors()
+	notesChannel := getAnnotationsChannel(edf.Header)
 
 	// writing header...
-	fmt.Sprintf("title:%s;", header["recording"])
+	fmt.Sprintf("title:%s;", edf.Header["recording"])
 	recorded := fmt.Sprintf("recorded:%s %s;",
-		                     header["startdate"],
-		                     header["starttime"])
-	sampling := fmt.Sprintf("sampling:%s;", GetSampling(header))
-	patient := fmt.Sprintf("subject:%s;", header["patient"])
-	labels := fmt.Sprintf("labels:%s;", GetLabels(header))
-	channel := fmt.Sprintf("chan:%s;", header["numbersignals"])
-	units := fmt.Sprintf("units:%s\n", GetUnits(header))
+		                     edf.Header["startdate"],
+		                     edf.Header["starttime"])
+	sampling := fmt.Sprintf("sampling:%s;", edf.GetSampling())
+	patient := fmt.Sprintf("subject:%s;", edf.Header["patient"])
+	labels := fmt.Sprintf("labels:%s;", edf.GetLabels())
+	channel := fmt.Sprintf("chan:%s;", edf.Header["numbersignals"])
+	units := fmt.Sprintf("units:%s\n", edf.GetUnits())
 
 	buffer.WriteString(recorded)
 	buffer.WriteString(sampling)
@@ -37,13 +37,13 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 	buffer.WriteString(channel)
 	buffer.WriteString(units)
 
-	// writing data records...
-	limit := len(records[0])
+	// writing data edf.Records...
+	limit := len(edf.Records[0])
 	for j := 0; j < limit; j++ {
 		line := ""
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
-				data := float64(records[i][j]) * convertionFactor[i]
+				data := float64(edf.Records[i][j]) * convertionFactor[i]
 
 				if i == 0 {
 					line += fmt.Sprintf("%f", data)
@@ -61,10 +61,10 @@ func WriteCSV(header map[string]string, records [][]int16) string {
 
 // Translates the data to the *.ascii format into a string.
 // Ignores the annotations channel.
-func WriteASCII(header map[string]string, records [][]int16) string {
-	numberSignals := getNumberSignals(header)
-	convertionFactor := SetConvertionFactor(header)
-	notesChannel := getAnnotationsChannel(header)
+func (edf *Edf) WriteASCII() string {
+	numberSignals := getNumberSignals(edf.Header)
+	convertionFactor := edf.GetConvertionFactors()
+	notesChannel := getAnnotationsChannel(edf.Header)
 	outlet := ""
 	flag := numberSignals
 	j := 0 // line number
@@ -74,7 +74,7 @@ func WriteASCII(header map[string]string, records [][]int16) string {
 
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
-				data, count := writeASCIIChannel(records[i],
+				data, count := writeASCIIChannel(edf.Records[i],
 					                             convertionFactor[i],
 					                             j)
 				outlet += data
@@ -90,12 +90,12 @@ func WriteASCII(header map[string]string, records [][]int16) string {
 }
 
 // Extracts the annoatations channel from the EDF file, if it exists.
-func WriteNotes(header map[string]string, records [][]int16) string {
-	which := getAnnotationsChannel(header)
+func (edf *Edf) WriteNotes() string {
+	which := getAnnotationsChannel(edf.Header)
 	outlet := ""
 
-	if which > 0 && which < len(records) {
-		annotations := convertInt16ToByte(records[which])
+	if which > 0 && which < len(edf.Records) {
+		annotations := convertInt16ToByte(edf.Records[which])
 		outlet += fmt.Sprintf("%s\n", formatAnnotations(annotations))
 	}
 
@@ -105,9 +105,9 @@ func WriteNotes(header map[string]string, records [][]int16) string {
 /* --- AUXILIAR FUNCTIONS --- */
 
 // Gets the sampling rate from the recording.
-func GetSampling(header map[string]string) string {
-	ns := getNumberSignals(header)
-	raw := separateString(header["samplesrecord"], ns)
+func (edf *Edf) GetSampling() string {
+	ns := getNumberSignals(edf.Header)
+	raw := separateString(edf.Header["samplesrecord"], ns)
 	rates := make([]int, ns)
 
 	// Turning sampling rates into numbers
@@ -124,19 +124,19 @@ func GetSampling(header map[string]string) string {
 }
 
 // Gets the physical units from the recording.
-func GetUnits(header map[string]string) string {
+func (edf *Edf) GetUnits() string {
 	// TODO extract units
 	return "uV"
 }
 
 // Gets the convertion factor to each channel.
-func SetConvertionFactor(header map[string]string) []float64 {
-	ns := getNumberSignals(header)
+func (edf *Edf) GetConvertionFactors() []float64 {
+	ns := getNumberSignals(edf.Header)
 	factors := make([]float64, ns)
-	dmaxs := separateString(header["digitalmaximum"], ns)
-	dmins := separateString(header["digitalminimum"], ns)
-	pmaxs := separateString(header["physicalmaximum"], ns)
-	pmins := separateString(header["physicalminimum"], ns)
+	dmaxs := separateString(edf.Header["digitalmaximum"], ns)
+	dmins := separateString(edf.Header["digitalminimum"], ns)
+	pmaxs := separateString(edf.Header["physicalmaximum"], ns)
+	pmins := separateString(edf.Header["physicalminimum"], ns)
 
 	for i := 0; i < ns; i++ {
 		dmax := str2int64(dmaxs[i])
@@ -152,8 +152,8 @@ func SetConvertionFactor(header map[string]string) []float64 {
 }
 
 // Get the labels' names from the EDF file in one array
-func GetLabels(header map[string]string) []string {
-	return separateString(header["label"], getNumberSignals(header))
+func (edf *Edf) GetLabels() []string {
+	return separateString(edf.Header["label"], getNumberSignals(edf.Header))
 }
 
 // Get the labels' names from the EDF file in one String

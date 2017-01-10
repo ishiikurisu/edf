@@ -9,7 +9,7 @@ import "encoding/binary"
 // Reads and EDF file, parsing it into the header and the records.
 // The header will be a map relating the properties to a string with the raw data
 // The records will be a matrix storing the raw bytes in the file
-func ReadFile(input string) (map[string]string, [][]int16) {
+func ReadFile(input string) Edf {
     inlet, err := os.Open(input)
 
     if err != nil {
@@ -20,7 +20,7 @@ func ReadFile(input string) (map[string]string, [][]int16) {
     header := ReadHeader(inlet)
     records := ReadRecords(inlet, header)
 
-    return header, records
+    return NewEdf(header, records)
 }
 
 // Reads the header of an EDF file. Requires the opened EDF file, the list of
