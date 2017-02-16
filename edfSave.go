@@ -19,8 +19,8 @@ func (edf *Edf) WriteEdf(output string) {
 	}
 
 	// Saving header's header
-	writeHeaderHeader(edf, fp)
 	// TODO Save header's records
+	writeHeaderHeader(edf, fp)
 	// TODO Save records
 }
 
@@ -28,23 +28,32 @@ func writeHeaderHeader(edf *Edf, fp *os.File) {
 	specsList := GetSpecsList()
 	specsLength := GetSpecsLength()
 	limit := len(specsList)
+	index := 0
 
-	for index := 0; index < limit; index++ {
+	for index = 0; index < limit; index++ {
 		spec := specsList[index]
 
 		if spec == "label" {
 			break
 		} else {
-			// TODO Enforce length of header data
 			field := edf.Header[spec]
 			field = enforceSize(field, specsLength[spec])
 			fmt.Fprintf(fp, "%s", field)
 			fmt.Printf("%s: %s\n", spec, field)
 		}
 	}
-	fmt.Println("")
-}
 
+	numberSignals := getNumberSignals(edf.Header)
+	for index = index; index < limit; index++ {
+		spec := specsList[index]
+		field := edf.Header[spec]
+		// TODO Enforce each record length
+		// Problem: how to enforce each record length?
+		field = enforceSize(field, specsLength[spec] * numberSignals)
+		fmt.Fprintf(fp, "%s", field)
+		fmt.Printf("%s: %s\n", spec, field)
+    }
+}
 
 /* ######################
    # AUXILIAR FUNCTIONS #
