@@ -11,7 +11,7 @@ func (edf *Edf) WriteGo() {
 	fmt.Printf("records: %#v\n", edf.Records)
 }
 
-// Fornats the data to the *.csv format into a string.
+// Formats the data to the *.csv format into a string.
 // Ignores the annotations channel.
 func (edf *Edf) WriteCSV() string {
 	var buffer bytes.Buffer
