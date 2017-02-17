@@ -2,6 +2,7 @@ package edf
 
 import "fmt"
 import "bytes"
+import "strings"
 
 /* --- MAIN FUNCTIONS --- */
 
@@ -26,7 +27,7 @@ func (edf *Edf) WriteCSV() string {
 		                     edf.Header["starttime"])
 	sampling := fmt.Sprintf("sampling:%s;", edf.GetSampling())
 	patient := fmt.Sprintf("subject:%s;", edf.Header["patient"])
-	labels := fmt.Sprintf("labels:%s;", edf.GetLabels())
+	labels := fmt.Sprintf("labels:%s;", strings.Join(edf.GetLabels(), ""))
 	channel := fmt.Sprintf("chan:%s;", edf.Header["numbersignals"])
 	units := fmt.Sprintf("units:%s\n", edf.GetUnits())
 
