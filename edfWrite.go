@@ -3,6 +3,8 @@ package edf
 import "fmt"
 import "bytes"
 import "strings"
+import "bufio"
+import "os"
 
 /* --- MAIN FUNCTIONS --- */
 
@@ -58,6 +60,55 @@ func (edf *Edf) WriteCSV() string {
 
 	outlet := buffer.String()
 	return outlet
+}
+
+// Writes a CSV string directly to a file
+func (edf *Edf) WriteCsvToFile(output string) {
+	fp, _ := os.Create(output)
+	buffer := bufio.NewWriter(fp)
+	numberSignals := getNumberSignals(edf.Header)
+	convertionFactor := edf.GetConvertionFactors()
+	notesChannel := getAnnotationsChannel(edf.Header)
+	defer fp.Close()
+
+	// writing header...
+	fmt.Sprintf("title:%s;", edf.Header["recording"])
+	recorded := fmt.Sprintf("recorded:%s %s;",
+		                     edf.Header["startdate"],
+		                     edf.Header["starttime"])
+	sampling := fmt.Sprintf("sampling:%s;", edf.GetSampling())
+	patient := fmt.Sprintf("subject:%s;", edf.Header["patient"])
+	labels := fmt.Sprintf("labels:%s;", strings.Join(edf.GetLabels(), ""))
+	channel := fmt.Sprintf("chan:%s;", edf.Header["numbersignals"])
+	units := fmt.Sprintf("units:%s\n", edf.GetUnits())
+
+	buffer.WriteString(recorded)
+	buffer.WriteString(sampling)
+	buffer.WriteString(patient)
+	buffer.WriteString(labels)
+	buffer.WriteString(channel)
+	buffer.WriteString(units)
+	buffer.Flush()
+
+	// writing data edf.Records...
+	limit := len(edf.Records[0])
+	for j := 0; j < limit; j++ {
+		line := ""
+		for i := 0; i < numberSignals; i++ {
+			if i != notesChannel {
+				data := float64(edf.Records[i][j]) * convertionFactor[i]
+
+				if i == 0 {
+					line += fmt.Sprintf("%f", data)
+				} else {
+					line += fmt.Sprintf("; %f", data)
+				}
+			}
+		}
+		buffer.WriteString(line + "\n")
+		buffer.Flush()
+	}
+
 }
 
 // Translates the data to the *.ascii format into a string.
