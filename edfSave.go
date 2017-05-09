@@ -2,12 +2,14 @@ package edf
 
 import "os"
 import "fmt"
+import "bytes"
+import "encoding/binary"
 
 /* ##################
    # MAIN FUNCTIONS #
    ################## */
 
-// Writes the EDF data to the given provided by the output string.
+// Writes the EDF data to the file whose name is the output string
 // WARNING!! THIS FUNCTION IS EXPERIMENTAL.
 func (edf *Edf) WriteEdf(output string) {
 	fp, oops := os.Create(output)
@@ -19,9 +21,11 @@ func (edf *Edf) WriteEdf(output string) {
 	}
 
 	// Saving header's header
+	// Saving header's header
 	// TODO Save header's records
 	writeHeaderHeader(edf, fp)
 	// TODO Save records
+	writeRecords(edf, fp)
 }
 
 func writeHeaderHeader(edf *Edf, fp *os.File) {
@@ -47,12 +51,37 @@ func writeHeaderHeader(edf *Edf, fp *os.File) {
 	for index = index; index < limit; index++ {
 		spec := specsList[index]
 		field := edf.Header[spec]
-		// TODO Enforce each record length
-		// Problem: how to enforce each record length?
 		field = enforceSize(field, specsLength[spec] * numberSignals)
 		fmt.Fprintf(fp, "%s", field)
 		fmt.Printf("%s: %s\n", spec, field)
     }
+}
+
+func writeRecords(edf *Edf, fp *os.File) {
+	dataRecords := str2int(edf.Header["datarecords"])
+	numberSignals := getNumberSignals(edf.Header)
+	sampling := make([]int, numberSignals)
+	duration := str2int(edf.Header["duration"])
+	numberSamples := getNumberSamples(edf.Header)
+
+	// Preparing records
+	for i := 0; i < numberSignals; i++ {
+		sampling[i] = duration * numberSamples[i]
+	}
+
+	// Writting chops
+	for d := 0; d < dataRecords-1; d++ {
+		for i := 0; i < numberSignals; i++ {
+			lowerLimit := d * sampling[i]
+			upperLimit := (d+1) * sampling[i]
+			record := edf.Records[i][lowerLimit:upperLimit]
+			for _, value := range record {
+				buffer := new(bytes.Buffer)
+				binary.Write(buffer, binary.LittleEndian, value)
+				fp.Write(buffer.Bytes())
+			}
+		}
+	}
 }
 
 /* ######################
