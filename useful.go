@@ -2,6 +2,8 @@ package edf
 
 import "fmt"
 import "math"
+import "strconv"
+import "strings"
 
 func separateString(stuff string, howMany int) []string {
 	bit := len(stuff) / howMany
@@ -39,6 +41,14 @@ func str2int64(str string) int64 {
 	fmt.Sscanf(str, "%d", &x)
 	return x
 }
+func str2float64(str string) float64 {
+	x, oops := strconv.ParseFloat(strings.TrimSpace(str), 64)
+	if oops != nil {
+		return float64(str2int64(str))
+	}
+	return x
+}
+
 
 func min(u, v int) int {
     if u < v {

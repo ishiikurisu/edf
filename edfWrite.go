@@ -191,12 +191,12 @@ func (edf *Edf) GetConvertionFactors() []float64 {
 	pmins := separateString(edf.Header["physicalminimum"], ns)
 
 	for i := 0; i < ns; i++ {
-		dmax := str2int64(dmaxs[i])
-		dmin := str2int64(dmins[i])
-		pmax := str2int64(pmaxs[i])
-		pmin := str2int64(pmins[i])
-		dig := float64(dmax-dmin)
-		phi := float64(pmax-pmin)
+		dmax := str2float64(dmaxs[i])
+		dmin := str2float64(dmins[i])
+		pmax := str2float64(pmaxs[i])
+		pmin := str2float64(pmins[i])
+		dig := dmax - dmin
+		phi := pmax - pmin
 		factors[i] = dig/phi;
 	}
 
@@ -205,7 +205,15 @@ func (edf *Edf) GetConvertionFactors() []float64 {
 
 // Get the labels' names from the EDF file in one array
 func (edf *Edf) GetLabels() []string {
-	return separateString(edf.Header["label"], getNumberSignals(edf.Header))
+	rawLabels := separateString(edf.Header["label"], getNumberSignals(edf.Header))
+	limit := len(rawLabels)
+	labels := make([]string, limit)
+
+	for i, rawLabel := range rawLabels {
+		labels[i] = strings.Replace(strings.Replace(rawLabel, "\n", " ", -1), "\r", " ", -1)
+	}
+
+	return labels
 }
 
 // Get the labels' names from the EDF file in one String
