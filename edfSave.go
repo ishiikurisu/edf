@@ -9,8 +9,9 @@ import "encoding/binary"
    # MAIN FUNCTIONS #
    ################## */
 
-// Writes the EDF data to the file whose name is the output string
-// WARNING!! THIS FUNCTION IS EXPERIMENTAL.
+// Writes the EDF data to the file whose name is the output string. This
+// function is in experimental state and must be used carefully!
+// BUG: Adds one second of empty data before and after the recording
 func (edf *Edf) WriteEdf(output string) {
 	fp, oops := os.Create(output)
 
