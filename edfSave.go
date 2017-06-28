@@ -20,11 +20,7 @@ func (edf *Edf) WriteEdf(output string) {
 		defer fp.Close()
 	}
 
-	// Saving header's header
-	// Saving header's header
-	// TODO Save header's records
 	writeHeaderHeader(edf, fp)
-	// TODO Save records
 	writeRecords(edf, fp)
 }
 
