@@ -176,8 +176,8 @@ func (edf *Edf) GetSampling() string {
 }
 
 // Gets the physical units from the recording.
+// TODO extract units
 func (edf *Edf) GetUnits() string {
-	// TODO extract units
 	return "uV"
 }
 
@@ -259,30 +259,31 @@ func writeASCIIChannel(record []int16, factor float64, index int) (string, int) 
 
 /* format annotations to human-readable text */
 func formatAnnotations(raw []byte) string {
-	return formatAnnotationsFeedback(0, raw, false, "")
+	return faf(0, raw, false, "")
 }
-func formatAnnotationsFeedback(index int, raw []byte, inside bool, box string) string {
+// aka formatAnnotationsFeedback
+func faf(index int, raw []byte, inside bool, box string) string {
 	if index == len(raw) {
 		return box
 	} else if inside {
 		if raw[index] == 0 {
-			return formatAnnotationsFeedback(index + 1,
-				                             raw,
-				                             false,
-				                             box + fmt.Sprintf("\n"))
+			return faf(index + 1,
+				       raw,
+				       false,
+				       box + fmt.Sprintf("\n"))
 		} else {
 			if raw[index] == 20 || raw[index] == 21 { raw[index] = ' ' }
-			return formatAnnotationsFeedback(index + 1,
-				                             raw,
-				                             inside,
-				                             box + fmt.Sprintf("%c", raw[index]))
+			return faf(index + 1,
+				       raw,
+				       inside,
+				       box + fmt.Sprintf("%c", raw[index]))
 		}
 	} else if raw[index] == '+' || raw[index] == '-' {
-		return formatAnnotationsFeedback(index + 1,
-				                         raw,
-				                         true,
-				                         box + string(raw[index]))
+		return faf(index + 1,
+				   raw,
+				   true,
+				   box + string(raw[index]))
 	} else {
-		return formatAnnotationsFeedback(index+1, raw, inside, box)
+		return faf(index+1, raw, inside, box)
 	}
 }
