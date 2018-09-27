@@ -13,7 +13,7 @@ import (
 
 /* Gets the duration of the file in seconds */
 func (edf Edf) GetDuration() int {
-	v, oops := strconv.Atoi(edf.Header["duration"])
+	v, oops := strconv.Atoi(strings.TrimSpace(edf.Header["duration"]))
 	if oops != nil {
 		panic(oops)
 	}
@@ -21,7 +21,7 @@ func (edf Edf) GetDuration() int {
 }
 
 /* Gets the number of signals that are present in the EDF file */
-func (edf Edf) GetNumberSignals(header map[string]string) int {
+func (edf Edf) GetNumberSignals() int {
 	return getNumberSignals(edf.Header)
 }
 
@@ -31,7 +31,7 @@ func (edf Edf) GetNumberSamples() []int {
 }
 
 // Get the labels' names from the EDF file in one array
-func (edf *Edf) GetLabels() []string {
+func (edf Edf) GetLabels() []string {
 	rawLabels := separateString(edf.Header["label"], getNumberSignals(edf.Header))
 	limit := len(rawLabels)
 	labels := make([]string, limit)
@@ -44,7 +44,7 @@ func (edf *Edf) GetLabels() []string {
 }
 
 // Gets the convertion factor to each channel.
-func (edf *Edf) GetConvertionFactors() []float64 {
+func (edf Edf) GetConvertionFactors() []float64 {
 	ns := getNumberSignals(edf.Header)
 	factors := make([]float64, ns)
 	dmaxs := separateString(edf.Header["digitalmaximum"], ns)
@@ -67,12 +67,12 @@ func (edf *Edf) GetConvertionFactors() []float64 {
 
 // Gets the physical units from the recording.
 // TODO extract units
-func (edf *Edf) GetUnits() string {
+func (edf Edf) GetUnits() string {
 	return "uV"
 }
 
 // Gets the sampling rate from the recording.
-func (edf *Edf) GetSampling() string {
+func (edf Edf) GetSampling() int {
 	ns := getNumberSignals(edf.Header)
 	raw := separateString(edf.Header["samplesrecord"], ns)
 	rates := make([]int, ns)
@@ -86,33 +86,27 @@ func (edf *Edf) GetSampling() string {
 	// TODO Write this part too
 	// After thought: this might not be needed
 
-	outlet := fmt.Sprintf("%d", rates[0])
-	return outlet
+	return rates[0]
 }
 
 /***************
  * EDF METHODS *
  ***************/
 
-// /!\ EXPERIMENTAL FUNCTION /!\
-//
 // Appends data from one EDF to another. Returns a new EDF object and an error,
 // which is `nil` if everything runs ok. This function requires the
 // EDF files to have the same sampling rate and the same number of channels.
+//
+// This function is in experimental state and must be used carefully!
 func Append(x, y Edf) (*Edf, error) {
 	// Checking for viability
-	if len(x.Records) != len(y.Records) {
+	if x.GetNumberSignals() != y.GetNumberSignals() {
 		return nil, errors.New("EDF files don't have the same number of records")
 	}
 	if x.GetSampling() != y.GetSampling() {
 		return nil, errors.New("EDF files don't have the same sampling rate")
 	}
 	z := NewEdf(x.Header, x.Records)
-
-	// Appending data records
-	for i := 0; i < len(x.Records); i++ {
-		z.Records[i] = appendInt16Arrays(x.Records[i], y.Records[i])
-	}
 
 	// Updating header
 	z.Header["duration"] = enforceSize(strconv.Itoa(x.GetDuration() + y.GetDuration()), 8)
@@ -125,6 +119,11 @@ func Append(x, y Edf) (*Edf, error) {
 		samplesrecord += enforceSize(strconv.Itoa(xSamples[i] + ySamples[i]), 8)
 	}
 	z.Header["samplesrecord"] = samplesrecord
+
+	// Appending data records
+	for i := 0; i < len(x.Records); i++ {
+		z.Records[i] = appendInt16Arrays(x.Records[i], y.Records[i])
+	}
 
 	return &z, nil
 }
