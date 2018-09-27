@@ -16,7 +16,7 @@ func separateString(stuff string, howMany int) []string {
     return outlet
 }
 
-func append(original, to_append []int16) []int16 {
+func appendInt16Arrays(original, to_append []int16) []int16 {
     lo := len(original)
     lt := len(to_append)
     outlet := make([]int16, lo + lt)
@@ -123,7 +123,7 @@ func extractBits(inlet int16) []byte {
     return outlet
 }
 
-// Deprecated. A functional IF statemant.
+// A functional IF statemant.
 func Iff(s bool, t, e string) string {
     if s {
         return t

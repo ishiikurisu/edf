@@ -81,7 +81,7 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
         for i := 0; i < numberSignals; i++ {
             data := make([]byte, 2*sampling[i])
             inlet.Read(data)
-            records[i] = append(records[i], translate(data))
+            records[i] = appendInt16Arrays(records[i], translate(data))
         }
     }
 
@@ -108,6 +108,8 @@ func translate(inlet []byte) []int16 {
 
     return outlet
 }
+
+// TODO Turn these into class methods
 
 func getNumberSignals(header map[string]string) int {
     raw := header["numbersignals"]
