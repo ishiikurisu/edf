@@ -109,14 +109,14 @@ func Append(x, y Edf) (*Edf, error) {
 	z := NewEdf(x.Header, x.Records)
 
 	// Updating header
-	z.Header["duration"] = enforceSize(strconv.Itoa(x.GetDuration() + y.GetDuration()), 8)
+	z.Header["duration"] = EnforceSize(strconv.Itoa(x.GetDuration() + y.GetDuration()), 8)
 
 	xSamples := x.GetNumberSamples()
 	ySamples := y.GetNumberSamples()
 	howManySamples := len(xSamples)
 	samplesrecord := ""
 	for i := 0; i < howManySamples; i++ {
-		samplesrecord += enforceSize(strconv.Itoa(xSamples[i] + ySamples[i]), 8)
+		samplesrecord += EnforceSize(strconv.Itoa(xSamples[i] + ySamples[i]), 8)
 	}
 	z.Header["samplesrecord"] = samplesrecord
 

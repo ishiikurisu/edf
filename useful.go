@@ -131,3 +131,20 @@ func Iff(s bool, t, e string) string {
         return e
     }
 }
+
+// Forces a string to be a certain size.
+func EnforceSize(field string, limit int) string {
+	length := len(field)
+
+	if limit == length {
+
+	} else if length > limit {
+		field = field[0:limit]
+	} else {
+		for i := 0; i < limit - length; i++ {
+			field += " "
+		}
+	}
+
+	return field
+}
