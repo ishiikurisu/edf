@@ -154,68 +154,6 @@ func (edf *Edf) WriteNotes() string {
 	return outlet
 }
 
-/* --- AUXILIAR FUNCTIONS --- */
-
-// Gets the sampling rate from the recording.
-func (edf *Edf) GetSampling() string {
-	ns := getNumberSignals(edf.Header)
-	raw := separateString(edf.Header["samplesrecord"], ns)
-	rates := make([]int, ns)
-
-	// Turning sampling rates into numbers
-	for i := 0; i < ns; i++ {
-		fmt.Sscanf(raw[i], "%d", &rates[i])
-	}
-
-	// Getting most common designated sampling rate
-	// TODO Write this part too
-	// After thought: this might not be needed
-
-	outlet := fmt.Sprintf("%d", rates[0])
-	return outlet
-}
-
-// Gets the physical units from the recording.
-// TODO extract units
-func (edf *Edf) GetUnits() string {
-	return "uV"
-}
-
-// Gets the convertion factor to each channel.
-func (edf *Edf) GetConvertionFactors() []float64 {
-	ns := getNumberSignals(edf.Header)
-	factors := make([]float64, ns)
-	dmaxs := separateString(edf.Header["digitalmaximum"], ns)
-	dmins := separateString(edf.Header["digitalminimum"], ns)
-	pmaxs := separateString(edf.Header["physicalmaximum"], ns)
-	pmins := separateString(edf.Header["physicalminimum"], ns)
-
-	for i := 0; i < ns; i++ {
-		dmax := str2float64(dmaxs[i])
-		dmin := str2float64(dmins[i])
-		pmax := str2float64(pmaxs[i])
-		pmin := str2float64(pmins[i])
-		dig := dmax - dmin
-		phi := pmax - pmin
-		factors[i] = dig/phi;
-	}
-
-	return factors
-}
-
-// Get the labels' names from the EDF file in one array
-func (edf *Edf) GetLabels() []string {
-	rawLabels := separateString(edf.Header["label"], getNumberSignals(edf.Header))
-	limit := len(rawLabels)
-	labels := make([]string, limit)
-
-	for i, rawLabel := range rawLabels {
-		labels[i] = strings.Replace(strings.Replace(rawLabel, "\n", " ", -1), "\r", " ", -1)
-	}
-
-	return labels
-}
-
 // Get the labels' names from the EDF file in one String
 func getLabels(header map[string]string) string {
 	numberSignals := getNumberSignals(header)
