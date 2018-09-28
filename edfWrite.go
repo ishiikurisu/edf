@@ -28,8 +28,8 @@ func (edf *Edf) WriteCSV() string {
 	// writing header...
 	fmt.Sprintf("title:%s;", edf.Header["recording"])
 	recorded := fmt.Sprintf("recorded:%s %s;",
-		                     edf.Header["startdate"],
-		                     edf.Header["starttime"])
+							edf.Header["startdate"],
+							edf.Header["starttime"])
 	sampling := fmt.Sprintf("sampling:%s;", edf.GetSampling())
 	patient := fmt.Sprintf("subject:%s;", edf.Header["patient"])
 	labels := fmt.Sprintf("labels:%s;", strings.Join(edf.GetLabels(), ""))
@@ -77,8 +77,8 @@ func (edf *Edf) WriteCsvToFile(output string) {
 	// writing header...
 	fmt.Sprintf("title:%s;", edf.Header["recording"])
 	recorded := fmt.Sprintf("recorded:%s %s;",
-		                     edf.Header["startdate"],
-		                     edf.Header["starttime"])
+							edf.Header["startdate"],
+							edf.Header["starttime"])
 	sampling := fmt.Sprintf("sampling:%s;", edf.GetSampling())
 	patient := fmt.Sprintf("subject:%s;", edf.Header["patient"])
 	labels := fmt.Sprintf("labels:%s;", strings.Join(edf.GetLabels(), ""))
@@ -130,8 +130,8 @@ func (edf *Edf) WriteASCII() string {
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
 				data, count := writeASCIIChannel(edf.Records[i],
-					                             convertionFactor[i],
-					                             j)
+												 convertionFactor[i],
+												 j)
 				outlet += data
 				flag += count
 			}
@@ -163,11 +163,11 @@ func getLabels(header map[string]string) string {
 	labels := separateString(header["label"], numberSignals)
 	outlet := ""
 
-    for i := 1; i < numberSignals; i++ {
-    	outlet += labels[i] + " "
-    }
+	for i := 1; i < numberSignals; i++ {
+		outlet += labels[i] + " "
+	}
 
-    return outlet
+	return outlet
 }
 
 func getAnnotationsChannel(header map[string]string) int {
@@ -209,15 +209,15 @@ func faf(index int, raw []byte, inside bool, box string) string {
 	} else if inside {
 		if raw[index] == 0 {
 			return faf(index + 1,
-				       raw,
-				       false,
-				       box + fmt.Sprintf("\n"))
+					   raw,
+					   false,
+					   box + fmt.Sprintf("\n"))
 		} else {
 			if raw[index] == 20 || raw[index] == 21 { raw[index] = ' ' }
 			return faf(index + 1,
-				       raw,
-				       inside,
-				       box + fmt.Sprintf("%c", raw[index]))
+					   raw,
+					   inside,
+					   box + fmt.Sprintf("%c", raw[index]))
 		}
 	} else if raw[index] == '+' || raw[index] == '-' {
 		return faf(index + 1,
@@ -233,66 +233,68 @@ func faf(index int, raw []byte, inside bool, box string) string {
  * EDF SAVE *
  ************/
 
- // Writes the EDF data to the file whose name is the output string. This
- // function is in experimental state and must be used carefully!
- // BUG: Adds one second of empty data before and after the recording
- func (edf *Edf) WriteEdf(output string) {
- 	fp, oops := os.Create(output)
+// Writes the EDF data to the file whose name is the output string. This
+// function is in experimental state and must be used carefully!
+// BUG: Adds one second of empty data before and after the recording
+func (edf *Edf) WriteEdf(output string) {
+	fp, oops := os.Create(output)
 
- 	if oops != nil {
- 		panic(oops)
- 	} else {
- 		defer fp.Close()
- 	}
+	if oops != nil {
+		panic(oops)
+	} else {
+		defer fp.Close()
+	}
 
- 	// Writting header
- 	specsList := GetSpecsList()
- 	specsLength := GetSpecsLength()
- 	limit := len(specsList)
- 	index := 0
+	// Writting header
+	fmt.Println("writting header")
+	specsList := GetSpecsList()
+	specsLength := GetSpecsLength()
+	limit := len(specsList)
+	index := 0
 
- 	for index = 0; index < limit; index++ {
- 		spec := specsList[index]
+	for index = 0; index < limit; index++ {
+		spec := specsList[index]
 
- 		if spec == "label" {
- 			break
- 		} else {
- 			field := edf.Header[spec]
- 			field = EnforceSize(field, specsLength[spec])
- 			fmt.Fprintf(fp, "%s", field)
- 		}
- 	}
+		if spec == "label" {
+			break
+		} else {
+			field := edf.Header[spec]
+			field = EnforceSize(field, specsLength[spec])
+			fmt.Fprintf(fp, "%s", field)
+		}
+	}
 
- 	numberSignals := getNumberSignals(edf.Header)
- 	for index = index; index < limit; index++ {
- 		spec := specsList[index]
- 		field := edf.Header[spec]
- 		field = EnforceSize(field, specsLength[spec] * numberSignals)
- 		fmt.Fprintf(fp, "%s", field)
-     }
+	numberSignals := getNumberSignals(edf.Header)
+	for index = index; index < limit; index++ {
+		spec := specsList[index]
+		field := edf.Header[spec]
+		field = EnforceSize(field, specsLength[spec] * numberSignals)
+		fmt.Fprintf(fp, "%s", field)
+	}
 
- 	// Writting data records
- 	dataRecords := str2int(edf.Header["datarecords"])
- 	sampling := make([]int, numberSignals)
- 	duration := str2int(edf.Header["duration"])
- 	numberSamples := getNumberSamples(edf.Header)
+	// Writting data records
+	fmt.Println("writting data records")
+	dataRecords := str2int(edf.Header["datarecords"])
+	sampling := make([]int, numberSignals)
+	duration := str2int(edf.Header["duration"])
+	numberSamples := getNumberSamples(edf.Header)
 
- 	// Preparing records
- 	for i := 0; i < numberSignals; i++ {
- 		sampling[i] = duration * numberSamples[i]
- 	}
+	for i := 0; i < numberSignals; i++ {
+		sampling[i] = duration * numberSamples[i]
+	}
 
- 	// Writting chops
- 	for d := 0; d < dataRecords-1; d++ {
- 		for i := 0; i < numberSignals; i++ {
- 			lowerLimit := d * sampling[i]
- 			upperLimit := (d+1) * sampling[i]
- 			record := edf.Records[i][lowerLimit:upperLimit]
- 			for _, value := range record {
- 				buffer := new(bytes.Buffer)
- 				binary.Write(buffer, binary.LittleEndian, value)
- 				fp.Write(buffer.Bytes())
- 			}
- 		}
- 	}
- }
+	for d := 0; d < dataRecords-1; d++ {
+		fmt.Printf("%d / %d\n", d+1, dataRecords-1)
+		for i := 0; i < numberSignals; i++ {
+			fmt.Printf("  %d / %d\n", i+1, numberSignals)
+			lowerLimit := d * sampling[i]
+			upperLimit := (d+1) * sampling[i]
+			record := edf.Records[i][lowerLimit:upperLimit]
+			for _, value := range record {
+				buffer := new(bytes.Buffer)
+				binary.Write(buffer, binary.LittleEndian, value)
+				fp.Write(buffer.Bytes())
+			}
+		}
+	}
+}

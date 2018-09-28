@@ -89,6 +89,10 @@ func (edf Edf) GetSampling() int {
 	return rates[0]
 }
 
+func (edf Edf) GetDataRecords() int {
+	return str2int(edf.Header["datarecords"])
+}
+
 /***************
  * EDF METHODS *
  ***************/
@@ -106,10 +110,13 @@ func Append(x, y Edf) (*Edf, error) {
 	if x.GetSampling() != y.GetSampling() {
 		return nil, errors.New("EDF files don't have the same sampling rate")
 	}
+	if x.GetDuration() != y.GetDuration() {
+		return nil, errors.New("EDF files don't have the same sampling duration")
+	}
 	z := NewEdf(x.Header, x.Records)
 
 	// Updating header
-	z.Header["duration"] = EnforceSize(strconv.Itoa(x.GetDuration() + y.GetDuration()), 8)
+	z.Header["datarecords"] = EnforceSize(strconv.Itoa(x.GetDataRecords() + y.GetDataRecords()), 8)
 
 	xSamples := x.GetNumberSamples()
 	ySamples := y.GetNumberSamples()

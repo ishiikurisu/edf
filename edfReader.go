@@ -109,8 +109,6 @@ func translate(inlet []byte) []int16 {
     return outlet
 }
 
-// TODO Turn these into class methods
-
 func getNumberSignals(header map[string]string) int {
     raw := header["numbersignals"]
     return str2int(raw)
