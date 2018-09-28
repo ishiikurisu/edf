@@ -99,7 +99,8 @@ func (edf Edf) GetDataRecords() int {
 
 // Appends data from one EDF to another. Returns a new EDF object and an error,
 // which is `nil` if everything runs ok. This function requires the
-// EDF files to have the same sampling rate and the same number of channels.
+// EDF files to have the same sampling rate, the same number of channels,
+// and the same duration for each data record.
 //
 // This function is in experimental state and must be used carefully!
 func Append(x, y Edf) (*Edf, error) {
@@ -116,7 +117,7 @@ func Append(x, y Edf) (*Edf, error) {
 	z := NewEdf(x.Header, x.Records)
 
 	// Updating header
-	z.Header["datarecords"] = EnforceSize(strconv.Itoa(x.GetDataRecords() + y.GetDataRecords()), 8)
+	z.Header["datarecords"] = EnforceSize(strconv.Itoa(x.GetDataRecords() + y.GetDataRecords()), GetSpecsLength()["datarecords"])
 
 	// Appending data records
 	for i := 0; i < len(x.Records); i++ {

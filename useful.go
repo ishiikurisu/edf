@@ -148,3 +148,12 @@ func EnforceSize(field string, limit int) string {
 
 	return field
 }
+
+// Sums all values of an int array
+func Sigma(a []int) int {
+	r := 0
+	for i := 0; i < len(a); i++ {
+		r += a[i]
+	}
+	return r
+}
