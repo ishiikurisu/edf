@@ -246,7 +246,6 @@ func (edf *Edf) WriteEdf(output string) {
 	}
 
 	// Writting header
-	fmt.Println("writting header")
 	specsList := GetSpecsList()
 	specsLength := GetSpecsLength()
 	limit := len(specsList)
@@ -273,7 +272,6 @@ func (edf *Edf) WriteEdf(output string) {
 	}
 
 	// Writting data records
-	fmt.Println("writting data records")
 	dataRecords := str2int(edf.Header["datarecords"])
 	sampling := make([]int, numberSignals)
 	duration := str2int(edf.Header["duration"])
@@ -283,18 +281,16 @@ func (edf *Edf) WriteEdf(output string) {
 		sampling[i] = duration * numberSamples[i]
 	}
 
+	buffer := new(bytes.Buffer)
 	for d := 0; d < dataRecords-1; d++ {
-		fmt.Printf("%d / %d\n", d+1, dataRecords-1)
 		for i := 0; i < numberSignals; i++ {
-			fmt.Printf("  %d / %d\n", i+1, numberSignals)
 			lowerLimit := d * sampling[i]
 			upperLimit := (d+1) * sampling[i]
 			record := edf.Records[i][lowerLimit:upperLimit]
 			for _, value := range record {
-				buffer := new(bytes.Buffer)
 				binary.Write(buffer, binary.LittleEndian, value)
-				fp.Write(buffer.Bytes())
 			}
 		}
 	}
+	fp.Write(buffer.Bytes())
 }
