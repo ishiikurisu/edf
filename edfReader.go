@@ -1,14 +1,14 @@
 package edf
 
 import (
-	"os"
 	"bytes"
 	"encoding/binary"
+	"os"
 )
 
 /* --- MAIN FUNCTIONS --- */
 
-// Reads and EDF file, parsing it into the header and the records.
+// ReadFile reads an EDF file, parsing it into the header and the records.
 // The header will be a map relating the properties to a string with the raw data
 // The records will be a matrix storing the raw bytes in the file
 func ReadFile(input string) Edf {
@@ -25,7 +25,7 @@ func ReadFile(input string) Edf {
 	return NewEdf(header, records)
 }
 
-// Reads the header of an EDF file. Requires the opened EDF file, the list of
+// ReadHeader reads the header of an EDF file. Requires the opened EDF file, the list of
 // specifications and the length in bytes for each of them, as described by
 // the EDF standard. The specs can be accessed though the GetSpecsList
 // function, and their lenghts through the GetSpecsLength one.
@@ -52,9 +52,9 @@ func ReadHeader(inlet *os.File) map[string]string {
 
 	// Reading header's records
 	numberSignals := getNumberSignals(header)
-	for index = index; index < len(specsList); index++ {
-		spec := specsList[index]
-		data := make([]byte, specsLength[spec] * numberSignals)
+	for j := index; j < len(specsList); j++ {
+		spec := specsList[j]
+		data := make([]byte, specsLength[spec]*numberSignals)
 		n, _ := inlet.Read(data)
 		header[spec] = string(data[:n])
 	}
@@ -62,7 +62,7 @@ func ReadHeader(inlet *os.File) map[string]string {
 	return header
 }
 
-// Reads the data records from the EDF file. Its parameters are the pointer to
+// ReadRecords reads the data records from the EDF file. Its parameters are the pointer to
 // file; and header information, as returned by the ReadHeader function.
 func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 	numberSignals := getNumberSignals(header)
@@ -87,8 +87,8 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 	i := 0
 	for d := 0; d < dataRecords; d++ {
 		for s := 0; s < numberSignals; s++ {
-			step := 2*sampling[s]
-			piece := data[i:i+step]
+			step := 2 * sampling[s]
+			piece := data[i : i+step]
 			records[s] = appendInt16Arrays(records[s], translate(piece))
 			i += step
 		}
@@ -97,11 +97,10 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 	return records
 }
 
-
 /* --- AUXILIAR FUNCTIONS --- */
 func translate(inlet []byte) []int16 {
 	var data int16
-	limit := len(inlet)/2
+	limit := len(inlet) / 2
 	outlet := make([]int16, limit)
 	buffer := bytes.NewReader(inlet)
 

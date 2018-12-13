@@ -5,7 +5,7 @@ import "fmt"
 import "strings"
 import "bufio"
 
-// Converts the given file from the CSV format, as produced by edf.WriteCSV to
+// Csv2Single converts the given file from the CSV format, as produced by edf.WriteCSV to
 // another, as produced by edf.WriteASCII
 func Csv2Single(inlet string) {
 	outlet := generateSingleOutput(inlet)
@@ -30,7 +30,7 @@ func Csv2Single(inlet string) {
 	typewriter.Flush()
 }
 
-// Converts a single CSV file to multiple ASCII files, each one for a different channel
+// Csv2Multiple converts a single CSV file to multiple ASCII files, each one for a different channel
 func Csv2Multiple(inlet string) {
 	inputFile, _ := os.Open(inlet)
 	scanner := bufio.NewScanner(inputFile)
@@ -84,7 +84,7 @@ func extractLabelsFromHeader(header string) []string {
 		stuff := strings.Split(fields[i], ":")
 		if stuff[0] == "labels" {
 			labels = stuff
-		} else if (stuff[0] == "chan") {
+		} else if stuff[0] == "chan" {
 			noChans = str2int(stuff[1])
 		}
 	}
@@ -94,7 +94,7 @@ func extractLabelsFromHeader(header string) []string {
 	labels = make([]string, 0)
 	for _, field := range fields {
 		field = trimField(field)
-		if (field != "EDF Annotations") {
+		if field != "EDF Annotations" {
 			labels = addItem(labels, field) // I CAN'T BELIEVE APPEND DOES NOT WORK HERE
 		}
 	}
@@ -106,7 +106,7 @@ func trimField(inlet string) string {
 	lower := 0
 	upper := len(inlet) - 1
 
-	if (len(inlet) == 0) {
+	if len(inlet) == 0 {
 		return inlet
 	}
 
@@ -117,7 +117,7 @@ func trimField(inlet string) string {
 		upper--
 	}
 
-	return inlet[lower:(upper+1)]
+	return inlet[lower:(upper + 1)]
 }
 
 func addItem(box []string, item string) []string {
@@ -138,7 +138,7 @@ func generateMultipleOutputs(inlet string, labels []string) []string {
 	i := 0
 
 	// Getting to the point
-	for i = len(inlet)-1; inlet[i] != '.'; i-- {
+	for i = len(inlet) - 1; inlet[i] != '.'; i-- {
 
 	}
 	raw = inlet[0:i]

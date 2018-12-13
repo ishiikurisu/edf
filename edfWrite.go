@@ -1,23 +1,23 @@
 package edf
 
 import (
-	"fmt"
-	"bytes"
-	"strings"
 	"bufio"
-	"os"
+	"bytes"
 	"encoding/binary"
+	"fmt"
+	"os"
+	"strings"
 )
 
 /* --- MAIN FUNCTIONS --- */
 
-// Just writes the read data as Go vars.
+// WriteGo writes the read data as Go vars.
 func (edf *Edf) WriteGo() {
 	fmt.Printf("header: %#v\n\n", edf.Header)
 	fmt.Printf("records: %#v\n", edf.Records)
 }
 
-// Formats the data to the *.csv format into a string.
+// WriteCSV formats the data to the *.csv format into a string.
 // Ignores the annotations channel.
 func (edf *Edf) WriteCSV() string {
 	var buffer bytes.Buffer
@@ -26,11 +26,10 @@ func (edf *Edf) WriteCSV() string {
 	notesChannel := getAnnotationsChannel(edf.Header)
 
 	// writing header...
-	fmt.Sprintf("title:%s;", edf.Header["recording"])
 	recorded := fmt.Sprintf("recorded:%s %s;",
-							edf.Header["startdate"],
-							edf.Header["starttime"])
-	sampling := fmt.Sprintf("sampling:%s;", edf.GetSampling())
+		edf.Header["startdate"],
+		edf.Header["starttime"])
+	sampling := fmt.Sprintf("sampling:%v;", edf.GetSampling())
 	patient := fmt.Sprintf("subject:%s;", edf.Header["patient"])
 	labels := fmt.Sprintf("labels:%s;", strings.Join(edf.GetLabels(), ""))
 	channel := fmt.Sprintf("chan:%s;", edf.Header["numbersignals"])
@@ -65,7 +64,7 @@ func (edf *Edf) WriteCSV() string {
 	return outlet
 }
 
-// Writes a CSV string directly to a file
+// WriteCsvToFile writes a CSV string directly to a file
 func (edf *Edf) WriteCsvToFile(output string) {
 	fp, _ := os.Create(output)
 	buffer := bufio.NewWriter(fp)
@@ -75,11 +74,10 @@ func (edf *Edf) WriteCsvToFile(output string) {
 	defer fp.Close()
 
 	// writing header...
-	fmt.Sprintf("title:%s;", edf.Header["recording"])
 	recorded := fmt.Sprintf("recorded:%s %s;",
-							edf.Header["startdate"],
-							edf.Header["starttime"])
-	sampling := fmt.Sprintf("sampling:%s;", edf.GetSampling())
+		edf.Header["startdate"],
+		edf.Header["starttime"])
+	sampling := fmt.Sprintf("sampling:%v;", edf.GetSampling())
 	patient := fmt.Sprintf("subject:%s;", edf.Header["patient"])
 	labels := fmt.Sprintf("labels:%s;", strings.Join(edf.GetLabels(), ""))
 	channel := fmt.Sprintf("chan:%s;", edf.Header["numbersignals"])
@@ -114,7 +112,7 @@ func (edf *Edf) WriteCsvToFile(output string) {
 
 }
 
-// Translates the data to the *.ascii format into a string.
+// WriteASCII translates the data to the *.ascii format into a string.
 // Ignores the annotations channel.
 func (edf *Edf) WriteASCII() string {
 	numberSignals := getNumberSignals(edf.Header)
@@ -130,21 +128,21 @@ func (edf *Edf) WriteASCII() string {
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
 				data, count := writeASCIIChannel(edf.Records[i],
-												 convertionFactor[i],
-												 j)
+					convertionFactor[i],
+					j)
 				outlet += data
 				flag += count
 			}
 		}
 
 		outlet += fmt.Sprintf("\n")
-		j += 1
+		j++
 	}
 
 	return outlet
 }
 
-// Extracts the annoatations channel from the EDF file, if it exists.
+// WriteNotes extracts the annoatations channel from the EDF file, if it exists.
 func (edf *Edf) WriteNotes() string {
 	which := getAnnotationsChannel(edf.Header)
 	outlet := ""
@@ -189,7 +187,7 @@ func writeASCIIChannel(record []int16, factor float64, index int) (string, int) 
 	flag := 1
 
 	if index < len(record) {
-		outlet += fmt.Sprintf("%f ", float64(record[index]) * factor)
+		outlet += fmt.Sprintf("%f ", float64(record[index])*factor)
 	} else {
 		outlet += fmt.Sprintf("0 ")
 		flag = 0
@@ -202,28 +200,30 @@ func writeASCIIChannel(record []int16, factor float64, index int) (string, int) 
 func formatAnnotations(raw []byte) string {
 	return faf(0, raw, false, "")
 }
+
 // aka formatAnnotationsFeedback
 func faf(index int, raw []byte, inside bool, box string) string {
 	if index == len(raw) {
 		return box
 	} else if inside {
 		if raw[index] == 0 {
-			return faf(index + 1,
-					   raw,
-					   false,
-					   box + fmt.Sprintf("\n"))
-		} else {
-			if raw[index] == 20 || raw[index] == 21 { raw[index] = ' ' }
-			return faf(index + 1,
-					   raw,
-					   inside,
-					   box + fmt.Sprintf("%c", raw[index]))
+			return faf(index+1,
+				raw,
+				false,
+				box+fmt.Sprintf("\n"))
 		}
+		if raw[index] == 20 || raw[index] == 21 {
+			raw[index] = ' '
+		}
+		return faf(index+1,
+			raw,
+			inside,
+			box+fmt.Sprintf("%c", raw[index]))
 	} else if raw[index] == '+' || raw[index] == '-' {
-		return faf(index + 1,
-				   raw,
-				   true,
-				   box + string(raw[index]))
+		return faf(index+1,
+			raw,
+			true,
+			box+string(raw[index]))
 	} else {
 		return faf(index+1, raw, inside, box)
 	}
@@ -233,7 +233,7 @@ func faf(index int, raw []byte, inside bool, box string) string {
  * EDF SAVE *
  ************/
 
-// Writes the EDF data to the file whose name is the output string. This
+// WriteEdf writes the EDF data to the file whose name is the output string. This
 // function is in experimental state and must be used carefully!
 // BUG: Adds one second of empty data before and after the recording
 func (edf *Edf) WriteEdf(output string) {
@@ -264,10 +264,10 @@ func (edf *Edf) WriteEdf(output string) {
 	}
 
 	numberSignals := getNumberSignals(edf.Header)
-	for index = index; index < limit; index++ {
-		spec := specsList[index]
+	for j := index; j < limit; j++ {
+		spec := specsList[j]
 		field := edf.Header[spec]
-		field = EnforceSize(field, specsLength[spec] * numberSignals)
+		field = EnforceSize(field, specsLength[spec]*numberSignals)
 		fmt.Fprintf(fp, "%s", field)
 	}
 
@@ -285,7 +285,7 @@ func (edf *Edf) WriteEdf(output string) {
 	for d := 0; d < dataRecords-1; d++ {
 		for i := 0; i < numberSignals; i++ {
 			lowerLimit := d * sampling[i]
-			upperLimit := (d+1) * sampling[i]
+			upperLimit := (d + 1) * sampling[i]
 			record := edf.Records[i][lowerLimit:upperLimit]
 			for _, value := range record {
 				binary.Write(buffer, binary.LittleEndian, value)
