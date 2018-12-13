@@ -68,18 +68,15 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 	numberSignals := getNumberSignals(header)
 	numberSamples := getNumberSamples(header)
 	records := make([][]int16, numberSignals)
-	sampling := make([]int, numberSignals)
-	duration := str2int(header["duration"])
 	dataRecords := str2int(header["datarecords"])
 
 	// setup records
 	for i := 0; i < numberSignals; i++ {
-		sampling[i] = duration * numberSamples[i]
-		records[i] = make([]int16, sampling[i])
+		records[i] = make([]int16, numberSamples[i])
 	}
 
 	// Reading records
-	dataRecordsSize := 2 * dataRecords * Sigma(sampling)
+	dataRecordsSize := 2 * dataRecords * Sigma(numberSamples)
 	data := make([]byte, dataRecordsSize)
 	inlet.Read(data)
 
@@ -87,7 +84,7 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 	i := 0
 	for d := 0; d < dataRecords; d++ {
 		for s := 0; s < numberSignals; s++ {
-			step := 2 * sampling[s]
+			step := 2 * numberSamples[s]
 			piece := data[i : i+step]
 			records[s] = appendInt16Arrays(records[s], translate(piece))
 			i += step
@@ -105,7 +102,6 @@ func translate(inlet []byte) []int16 {
 	buffer := bytes.NewReader(inlet)
 
 	for i := 0; i < limit; i++ {
-		// oops := binary.Read(buffer, binary.BigEndian, &data)
 		oops := binary.Read(buffer, binary.LittleEndian, &data)
 		if oops == nil {
 			outlet[i] = data
