@@ -21,8 +21,9 @@ func ReadFile(input string) Edf {
 	defer inlet.Close()
 	header := ReadHeader(inlet)
 	records := ReadRecords(inlet, header)
+	physicalRecords := GetConvertedRecords(&records, header)
 
-	return NewEdf(header, records)
+	return NewEdf(header, records, physicalRecords)
 }
 
 // ReadHeader reads the header of an EDF file. Requires the opened EDF file, the list of
@@ -93,6 +94,32 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 	}
 
 	return records
+}
+
+// GetConvertedRecords gets the convertion factor to each channel.
+func GetConvertedRecords(records *[][]int16, header map[string]string) [][]float64 {
+	ns := getNumberSignals(header)
+	convertedRecords := make([][]float64, ns)
+	dmaxs := separateString(header["digitalmaximum"], ns)
+	dmins := separateString(header["digitalminimum"], ns)
+	pmaxs := separateString(header["physicalmaximum"], ns)
+	pmins := separateString(header["physicalminimum"], ns)
+
+	for i := 0; i < ns; i++ {
+		dmax := str2float64(dmaxs[i])
+		dmin := str2float64(dmins[i])
+		pmax := str2float64(pmaxs[i])
+		pmin := str2float64(pmins[i])
+
+		k := (pmax - pmin) / (dmax - dmin)
+		convertedRecords[i] = make([]float64, len((*records)[i]))
+
+		for j := 0; j < len((*records)[i]); j++ {
+			convertedRecords[i][j] = k*(float64((*records)[i][j])-dmin) + pmin
+		}
+	}
+
+	return convertedRecords
 }
 
 /* --- AUXILIAR FUNCTIONS --- */

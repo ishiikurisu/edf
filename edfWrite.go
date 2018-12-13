@@ -22,7 +22,6 @@ func (edf *Edf) WriteGo() {
 func (edf *Edf) WriteCSV() string {
 	var buffer bytes.Buffer
 	numberSignals := getNumberSignals(edf.Header)
-	convertionFactor := edf.GetConvertionFactors()
 	notesChannel := getAnnotationsChannel(edf.Header)
 
 	// writing header...
@@ -48,7 +47,7 @@ func (edf *Edf) WriteCSV() string {
 		line := ""
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
-				data := float64(edf.Records[i][j]) * convertionFactor[i]
+				data := edf.PhysicalRecords[i][j]
 
 				if i == 0 {
 					line += fmt.Sprintf("%f", data)
@@ -69,7 +68,6 @@ func (edf *Edf) WriteCsvToFile(output string) {
 	fp, _ := os.Create(output)
 	buffer := bufio.NewWriter(fp)
 	numberSignals := getNumberSignals(edf.Header)
-	convertionFactor := edf.GetConvertionFactors()
 	notesChannel := getAnnotationsChannel(edf.Header)
 	defer fp.Close()
 
@@ -97,7 +95,7 @@ func (edf *Edf) WriteCsvToFile(output string) {
 		line := ""
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
-				data := float64(edf.Records[i][j]) * convertionFactor[i]
+				data := edf.PhysicalRecords[i][j]
 
 				if i == 0 {
 					line += fmt.Sprintf("%f", data)
@@ -116,7 +114,6 @@ func (edf *Edf) WriteCsvToFile(output string) {
 // Ignores the annotations channel.
 func (edf *Edf) WriteASCII() string {
 	numberSignals := getNumberSignals(edf.Header)
-	convertionFactor := edf.GetConvertionFactors()
 	notesChannel := getAnnotationsChannel(edf.Header)
 	outlet := ""
 	flag := numberSignals
@@ -127,9 +124,7 @@ func (edf *Edf) WriteASCII() string {
 
 		for i := 0; i < numberSignals; i++ {
 			if i != notesChannel {
-				data, count := writeASCIIChannel(edf.Records[i],
-					convertionFactor[i],
-					j)
+				data, count := writeASCIIChannel(edf.PhysicalRecords[i], j)
 				outlet += data
 				flag += count
 			}
@@ -182,12 +177,12 @@ func getAnnotationsChannel(header map[string]string) int {
 }
 
 /* returns false when it can't write anymore */
-func writeASCIIChannel(record []int16, factor float64, index int) (string, int) {
+func writeASCIIChannel(record []float64, index int) (string, int) {
 	outlet := ""
 	flag := 1
 
 	if index < len(record) {
-		outlet += fmt.Sprintf("%f ", float64(record[index])*factor)
+		outlet += fmt.Sprintf("%f ", record[index])
 	} else {
 		outlet += fmt.Sprintf("0 ")
 		flag = 0

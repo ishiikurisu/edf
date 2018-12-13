@@ -115,7 +115,7 @@ func Append(x, y Edf) (*Edf, error) {
 	if x.GetDuration() != y.GetDuration() {
 		return nil, errors.New("EDF files don't have the same sampling duration")
 	}
-	z := NewEdf(x.Header, x.Records)
+	z := NewEdf(x.Header, x.Records, GetConvertedRecords(&(x.Records), x.Header))
 
 	// Updating header
 	z.Header["datarecords"] = EnforceSize(strconv.Itoa(x.GetDataRecords()+y.GetDataRecords()), GetSpecsLength()["datarecords"])

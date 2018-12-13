@@ -12,13 +12,17 @@ type Edf struct {
 	// The records will be stored in its raw form, each one of them stored in
 	// an array of int16.
 	Records [][]int16
+
+	// additionally all records will be stored in its physical form
+	PhysicalRecords [][]float64
 }
 
 // NewEdf returns a new Edf struct
-func NewEdf(header map[string]string, records [][]int16) Edf {
+func NewEdf(header map[string]string, records [][]int16, physicalRecords [][]float64) Edf {
 	return Edf{
-		Header:  header,
-		Records: records,
+		Header:          header,
+		Records:         records,
+		PhysicalRecords: physicalRecords,
 	}
 }
 
