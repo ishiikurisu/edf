@@ -79,14 +79,15 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 	dataRecordsSize := 2 * dataRecords * Sigma(numberSamples)
 	data := make([]byte, dataRecordsSize)
 	inlet.Read(data)
+	transData := translate(data)
 
 	// translate data
 	i := 0
 	for d := 0; d < dataRecords; d++ {
 		for s := 0; s < numberSignals; s++ {
-			step := 2 * numberSamples[s]
-			piece := data[i : i+step]
-			records[s] = appendInt16Arrays(records[s], translate(piece))
+			step := numberSamples[s]
+			piece := transData[i : i+step]
+			records[s] = append(records[s], piece...)
 			i += step
 		}
 	}
