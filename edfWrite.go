@@ -273,19 +273,13 @@ func (edf *Edf) WriteEdf(output string) {
 
 	// Writting data records
 	dataRecords := str2int(edf.Header["datarecords"])
-	sampling := make([]int, numberSignals)
-	duration := str2int(edf.Header["duration"])
 	numberSamples := getNumberSamples(edf.Header)
 
-	for i := 0; i < numberSignals; i++ {
-		sampling[i] = duration * numberSamples[i]
-	}
-
 	buffer := new(bytes.Buffer)
-	for d := 0; d < dataRecords-1; d++ {
+	for d := 0; d < dataRecords; d++ {
 		for i := 0; i < numberSignals; i++ {
-			lowerLimit := d * sampling[i]
-			upperLimit := (d + 1) * sampling[i]
+			lowerLimit := d * numberSamples[i]
+			upperLimit := (d + 1) * numberSamples[i]
 			record := edf.Records[i][lowerLimit:upperLimit]
 			for _, value := range record {
 				binary.Write(buffer, binary.LittleEndian, value)
