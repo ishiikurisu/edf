@@ -72,7 +72,7 @@ func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
 
 	// setup records
 	for i := 0; i < numberSignals; i++ {
-		records[i] = make([]int16, numberSamples[i])
+		records[i] = make([]int16, 0, dataRecords*numberSamples[i])
 	}
 
 	// Reading records
