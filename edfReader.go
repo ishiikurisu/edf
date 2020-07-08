@@ -3,10 +3,25 @@ package edf
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
 	"os"
 )
 
 /* --- MAIN FUNCTIONS --- */
+
+func Read(name string) (*Edf, error) {
+	file, err := os.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	header := ReadHeader(file)
+	records := ReadRecords(file, header)
+	physicalRecords := GetConvertedRecords(&records, header)
+
+	edf := NewEdf(header, records, physicalRecords)
+	return &edf, nil
+}
 
 // ReadFile reads an EDF file, parsing it into the header and the records.
 // The header will be a map relating the properties to a string with the raw data
@@ -30,7 +45,8 @@ func ReadFile(input string) Edf {
 // specifications and the length in bytes for each of them, as described by
 // the EDF standard. The specs can be accessed though the GetSpecsList
 // function, and their lenghts through the GetSpecsLength one.
-func ReadHeader(inlet *os.File) map[string]string {
+//func ReadHeader(inlet *os.File) map[string]string {
+func ReadHeader(inlet io.Reader) map[string]string {
 	specsList := GetSpecsList()
 	specsLength := GetSpecsLength()
 	header := make(map[string]string)
@@ -65,7 +81,7 @@ func ReadHeader(inlet *os.File) map[string]string {
 
 // ReadRecords reads the data records from the EDF file. Its parameters are the pointer to
 // file; and header information, as returned by the ReadHeader function.
-func ReadRecords(inlet *os.File, header map[string]string) [][]int16 {
+func ReadRecords(inlet io.Reader, header map[string]string) [][]int16 {
 	numberSignals := getNumberSignals(header)
 	numberSamples := getNumberSamples(header)
 	records := make([][]int16, numberSignals)
