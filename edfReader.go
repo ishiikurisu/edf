@@ -9,6 +9,16 @@ import (
 
 /* --- MAIN FUNCTIONS --- */
 
+func Reader(rdr io.ReadCloser) (*Edf, error) {
+	defer rdr.Close()
+	header := ReadHeader(rdr)
+	records := ReadRecords(rdr, header)
+	physicalRecords := GetConvertedRecords(&records, header)
+
+	edf := NewEdf(header, records, physicalRecords)
+	return &edf, nil
+}
+
 func Read(name string) (*Edf, error) {
 	file, err := os.Open(name)
 	if err != nil {
