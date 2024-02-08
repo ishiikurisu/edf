@@ -142,7 +142,7 @@ func (edf *Edf) WriteNotes() string {
 	which := getAnnotationsChannel(edf.Header)
 	outlet := ""
 
-	if which > 0 && which < len(edf.Records) {
+	if which >= 0 && which < len(edf.Records) {
 		annotations := convertInt16ToByte(edf.Records[which])
 		outlet += fmt.Sprintf("%s\n", formatAnnotations(annotations))
 	}

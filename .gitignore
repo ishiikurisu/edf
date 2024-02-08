@@ -2,3 +2,4 @@
 *.syso
 *.o
 *.a
+.idea
