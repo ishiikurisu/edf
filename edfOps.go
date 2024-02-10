@@ -12,8 +12,8 @@ import (
  ******************/
 
 // GetDuration gets the duration of the file in seconds
-func (edf Edf) GetDuration() int {
-	v, oops := strconv.Atoi(strings.TrimSpace(edf.Header["duration"]))
+func (edf Edf) GetDuration() float64 {
+	v, oops := strconv.ParseFloat(strings.TrimSpace(edf.Header["duration"]), 64)
 	if oops != nil {
 		panic(oops)
 	}
